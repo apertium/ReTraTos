@@ -1,0 +1,13 @@
+package Prefix;
+
+use 5.006;
+use strict;
+use warnings;
+use locale;
+
+$prefix        = "@prefix@";
+$datadir       = "@datadir@";
+$retratosdir   = "@retratosdir@";
+
+use lib "$ENV{PWD}/ReTraTos/";
+use lib "$retratosdir";
