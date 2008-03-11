@@ -1,7 +1,7 @@
 AC_PREREQ([2.56])
 
-AC_INIT([retratos], [0.8], [helename@sourceforge.net])
-AM_INIT_AUTOMAKE([retratos], [0.8], no-define)
+AC_INIT([retratos], [0.8.0], [helename@sourceforge.net])
+AM_INIT_AUTOMAKE([retratos], [0.8.0], no-define)
 
 AM_MAINTAINER_MODE
 
@@ -14,7 +14,6 @@ if test x$ac_cv_path_PERL = xno
 then
   AC_MSG_ERROR([You don't have perl installed.])
 fi
-
 
 #use Getopt::Long;
 #use Pod::Usage;
