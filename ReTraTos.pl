@@ -20,13 +20,13 @@ use Getopt::Long;
 use Pod::Usage;
 use IO::Handle;
 # Modulos do ReTraTos
-use Entrada;
-use Auxiliares;
-use Blocos;
-use Identifica;
-use Gera;
-use Filtra;
-use Ordena;
+use ReTraTos::Entrada;
+use ReTraTos::Auxiliares;
+use ReTraTos::Blocos;
+use ReTraTos::Identifica;
+use ReTraTos::Gera;
+use ReTraTos::Filtra;
+use ReTraTos::Ordena;
 
 #*****************************************************************************************************
 my(@exemplosfonte,@exemplosalvo); # array com exemplos fonte e alvo
