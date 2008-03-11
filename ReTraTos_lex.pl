@@ -25,9 +25,9 @@ use Getopt::Long;
 use Pod::Usage;
 use IO::Handle;
 # Modulos do ReTraTos
-use Entrada;
-use Lexico;
-use Auxiliares;
+use ReTraTos::Entrada;
+use ReTraTos::Lexico;
+use ReTraTos::Auxiliares;
 
 #*****************************************************************************************************
 my(@exemplosfonte,@exemplosalvo); # array com exemplos fonte e alvo
