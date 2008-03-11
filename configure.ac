@@ -5,5 +5,10 @@ AM_INIT_AUTOMAKE([retratos], [0.8], no-define)
 
 AM_MAINTAINER_MODE
 
-AM_PATH_PERL
+#use Getopt::Long;
+#use Pod::Usage;
+#use IO::Handle;
+
+AC_CHECK_PERL_MODULES(Getopt::Long Pod::Usage IO::Handle, ,
+                          AC_MSG_WARN(Need some Perl modules)
 
