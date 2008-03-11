@@ -1,19 +1,19 @@
 VERSION=0.8.0
 
-bin_SCRIPTS = ReTraTos_lex ReTraTos
+SUBDIRS = ReTraTos
+
+bin_SCRIPTS = ReTraTos_lex ReTraTos_rgl
 
 # here we should probably do some path processing
 
 ReTraTos_lex:	
 	cp ReTraTos_lex.pl ReTraTos_lex
 
-ReTraTos:
-	cp ReTraTos.pl ReTraTos
+ReTraTos_rgl:
+	cp ReTraTos.pl ReTraTos_rgl
 
 pkgconfigdir = $(libdir)/pkgconfig
 
-retratos_perldir = @PERLPATH@/ReTraTos
-retratos_perl_DATA = Auxiliares.pm Blocos.pm Entrada.pm Filtra.pm \
-	Gera.pm Identifica.pm Lexico.pm Ordena.pm
-
-EXTRA_DIST = README ReTraTos_lex.pl ReTraTos.pl $(retratos_perl_DATA)
+EXTRA_DIST = m4/perlmodules.m4 m4/definedir.m4 \
+	identifica_padroes.pl ReTraTos_lex.pl \
+	ReTraTos.pl

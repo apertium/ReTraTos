@@ -19,7 +19,10 @@
 
 use warnings;
 use strict;
+no warnings qw(redefine);
 use locale;
+
+use lib "$ENV{PWD}/ReTraTos/";
 
 use Getopt::Long;
 use Pod::Usage;
