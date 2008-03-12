@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-# 31/08/2006
-
 ######################################################################################################
 # Programa indutor de regras de transferencia
 # Entrada: 
@@ -66,14 +64,14 @@ my $ordena = 0;      # opcao de ordenar as regras de traducao (0=nao,1=sim)
 	pod2usage(2) if $help;
 	pod2usage(2) unless $arqfonte && $arqalvo;
 
-	print "\nHora inicial: ",Auxiliares::imprime_hora,"\n";	
+	Auxiliares::mensagem("\nInitial time: ".Auxiliares::imprime_hora."\n");	
 	
 	my($ngram,$janela,$dir,$arq);
 
 	$ngram = 1;	
-	$janela = 3; #19/12: numero de posicoes antes e depois da omissao no bloco de tipo 0
-	my $tammin = 2; # 02/08: tamanho minimo de um padrao
-	my $tammax = 5; # 02/08: tamanho maximo de um padrao
+	$janela = 3; # numero de posicoes antes e depois da omissao no bloco de tipo 0
+	my $tammin = 2; # tamanho minimo de um padrao
+	my $tammax = 5; # tamanho maximo de um padrao
 	$dir = Auxiliares::nome($0).'_'.Auxiliares::nome($arqfonte).'X'.Auxiliares::nome($arqalvo);
 	$dir .= '_pi='.$poride.'_pf='.$porfil.'_'.$campo.'_'.$tipo;
 	if ($icategs ne "") { $dir .= '_+'.$icategs; }
@@ -82,24 +80,24 @@ my $ordena = 0;      # opcao de ordenar as regras de traducao (0=nao,1=sim)
 	
 	@exemplosfonte = @exemplosalvo = %blocosfonte = %blocosalvo = ();
 
-	print "\nPRE-PROCESSAMENTO\n\n";
+	Auxiliares::mensagem("\nPREPROCESSING\n\n");
 	
 	Entrada::le_exemplos($arqfonte,\@exemplosfonte);
 	Entrada::le_exemplos($arqalvo,\@exemplosalvo);
 
-	print "\tCriando blocos de alinhamentos ... ";
+	Auxiliares::mensagem("\tCreating alignment blocks ... ");
 	map(Blocos::cria_blocos($janela,$tammin,$_,\@{$exemplosfonte[$_]{'ali'}},\@{$exemplosalvo[$_]{'ali'}},\%blocosfonte,\%blocosalvo),0..$#exemplosfonte);
-	print "OK\n";
+	Auxiliares::mensagem("OK\n");
 	
-	print "\n\nINDUCAO DAS REGRAS\n\n";
+	Auxiliares::mensagem("\n\nRULE INDUCTION\n\n");
 	
 	%padroesbil = %regras = ();
 
-	if ($tipo == 3) { print "\tInduzindo regras para campo $campo e todos os tipos ...\n"; }
-	else { print "\tInduzindo regras para campo $campo e tipo $tipo ...\n"; }
+	if ($tipo == 3) { Auxiliares::mensagem("\tInducing rules for field $campo and all types of alignments ...\n"); }
+	else { Auxiliares::mensagem("\tInducing rules for field $campo and type $tipo ...\n"); }
 	
 	# PASSO 1 - inicio
-	print "\nPasso 1 - Identificacao de padroes\n";
+	Auxiliares::mensagem("\nStep 1 - Pattern identification\n");
 		
 	if ($tipo == 3) {
 		identifica_padroes(0);
@@ -110,7 +108,7 @@ my $ordena = 0;      # opcao de ordenar as regras de traducao (0=nao,1=sim)
 	# PASSO 1 - fim
 
 	# PASSO 2 - inicio
-	print "\nPasso 2 - Geracao das regras\n";
+	Auxiliares::mensagem("\nStep 2 - Rule generation\n");
 	Gera::regras($campo,$tipo,\@exemplosfonte,\@exemplosalvo,\%padroesbil,\%regras);
 
 	%padroesbil = (); # libera memória
@@ -118,25 +116,25 @@ my $ordena = 0;      # opcao de ordenar as regras de traducao (0=nao,1=sim)
 	
 	# PASSO 3 - inicio	
 	if ($filtra) {
-		print "\nPasso 3 - Filtragem das regras\n";
+		Auxiliares::mensagem("\nStep 3 - Rule filtering\n");
 		Filtra::regras(\%regras,\@exemplosfonte,$porfil);
 	}
 	# PASSO 3 - fim
 
 	# PASSO 4 - inicio		
 	if ($ordena) {
-		print "\nPasso 4 - Ordenacao das regras\n";
+		Auxiliares::mensagem("\nStep 4 - Rule sorting\n");
  		Ordena::regras(\%regras);		
  	}
 	# PASSO 4 - fim
 
-	print "\n\nIMPRESSAO DAS REGRAS\n\n";
-	$arq = $dir.'/regras_finais_'.$campo.'.txt';
-	print "\t",imprime_regras($arq,\%regras,$n)," regras impressas em $arq\n\n";
+	Auxiliares::mensagem("\n\nPRINTING INDUCED RULES\n\n");
+	$arq = $dir.'/transfer_rules_'.$campo.'.txt';
+	Auxiliares::mensagem("\t",imprime_regras($arq,\%regras,$n)," rules printed in $arq\n\n");
 	
 	%regras = @exemplosfonte = @exemplosalvo = ();
 
-	print "Hora final: ",Auxiliares::imprime_hora,"\n\n";	
+	Auxiliares::mensagem("Final time: ".Auxiliares::imprime_hora."\n\n");	
 	
 	exit;
 
@@ -147,23 +145,24 @@ my $ordena = 0;      # opcao de ordenar as regras de traducao (0=nao,1=sim)
 # Funcao: Induz os padroes mono e bilingues, do tipo $t, imprimindo-os em arquivos auxiliares
 sub identifica_padroes {
 	my($t) = @_;
-	my(%padroesfonte,$qtd,$freq,$arqblo,$arqpadfon,$arqpadbil,$qtdblocos); #%padroesalvo
+	my(%padroesfonte,$qtd,$freq,$arqblo,$arqpadfon,$arqpadbil,$qtdblocos); 
 
 	# Pre-processamento: impressao dos blocos, calculo da frequencia minima - INICIO	
-	$arqblo = $dir.'/blocos_fonte_'.$campo.'_+'.$icategs.'_'.$t.'.txt';
+	$arqblo = $dir.'/source_blocks_'.$campo.'_+'.$icategs.'_'.$t.'.txt';
 
 	Blocos::imprime_blocos(\@exemplosfonte,\@{$blocosfonte{$t}},$icategs,$campo,$t,$arqblo);
 	$qtdblocos = $#{$blocosfonte{$t}}+1;
 	$freq = int($poride*$qtdblocos);
 	# Pre-processamento: impressao dos blocos - FIM
 
-	$arqpadfon = $dir.'/padroes_fonte_'.$campo.'_+'.$icategs.'_-'.$ecategs.'_'.$t.'_'.$freq.'.txt';
-	$arqpadbil = $dir.'/padroes_bilingues_'.$campo.'_+'.$icategs.'_-'.$ecategs.'_'.$t.'_'.$freq.'.txt';
+	$arqpadfon = $dir.'/source_patterns_'.$campo.'_+'.$icategs.'_-'.$ecategs.'_'.$t.'_'.$freq.'.txt';
+	$arqpadbil = $dir.'/bilingual_patterns_'.$campo.'_+'.$icategs.'_-'.$ecategs.'_'.$t.'_'.$freq.'.txt';
 
-	print "\tIdentificando padroes para campo $campo";
-	if ($icategs ne '') { print " (+ $icategs)";  }
-	if ($ecategs ne '') { print " (- $ecategs)"; }
-	print " e tipo $t a partir de $qtdblocos blocos com frequencia minima $freq ...\n";
+	Auxiliares::mensagem("\tIdentifying patterns for field $campo");
+	if ($icategs ne '') { Auxiliares::mensagem(" (+ $icategs)");  }
+	if ($ecategs ne '') { Auxiliares::mensagem(" (- $ecategs)"); }
+	Auxiliares::mensagem("\n\t\tand type $t\n\t\tfrom $qtdblocos alignment blocks");
+	Auxiliares::mensagem("\n\t\twith mininal frequency threshold = $freq ...\n");
 
 	%padroesfonte = ();
 
@@ -172,12 +171,12 @@ sub identifica_padroes {
 		# Passo 1: identificacao de padroes monolingues (fonte)
 		if (open(ARQ,$arqpadfon)) { close ARQ; } # Se arquivo com padroes fonte ja existe nao faz nada
 		else { 
-			Identifica::padroes_monolingues($arqblo,$icategs,$ecategs,$freq,$tammin,$tammax,$arqpadfon); 
+			Identifica::padroes_monolingues($arqblo,$icategs,$ecategs,$freq,$tammin,$tammax,$arqpadfon,$verbose); 
 		}
 
 		# Le padroes monolingues
-		print "\t",Identifica::le_padroes_mono($arqpadfon,\@{$blocosfonte{$t}},\@exemplosfonte,$icategs,$campo,$ngram,\%padroesfonte);
-		print " padroes monolingues identificados\n";
+		Auxiliares::mensagem("\t".Identifica::le_padroes_mono($arqpadfon,\@{$blocosfonte{$t}},\@exemplosfonte,$icategs,$campo,$ngram,\%padroesfonte));
+		Auxiliares::mensagem(" monolingual patterns identified\n");
 
 		# Passo 2: identificacao de padroes bilingues
 		Identifica::padroes_bilingues($campo,$t,$icategs,$freq,\%padroesfonte,\@exemplosfonte,\@exemplosalvo,$arqpadbil); 
@@ -186,11 +185,14 @@ sub identifica_padroes {
 	}
 	
 	# Le os padroes bilingues
-	print "\t",Identifica::le_padroes_bili($arqpadbil,\%padroesbil);
-	print " padroes bilingues identificados\n";
+	Auxiliares::mensagem("\t".Identifica::le_padroes_bili($arqpadbil,\%padroesbil));
+	Auxiliares::mensagem(" bilingual patterns identified\n");
 
 	$n += $qtdblocos;
 	# Passo 2: identificacao de padroes bilingues - FIM
+	
+	# Apaga arquivos auxiliares com blocos de alinhamento e pradroes monolingues
+	if ($remove) { system("rm $arqblo $arqpadfon $arqpadbil"); }
 }
 
 #*****************************************************************************************************
@@ -211,7 +213,7 @@ sub imprime_regras {
 	@fontes = sort {lc($a) cmp lc($b)} keys %$regras;
 	# Ordena as regras por ordem decrescente das frequencias antes da impressao
 	#@fontes = sort {int($$regras{$b}[$#{$$regras{$b}}]) <=> int($$regras{$a}[$#{$$regras{$a}}])} keys %$regras;
-	open(ARQ,">$arq") or die "Nao eh possivel abrir o arquivo $arq\n";
+	open(ARQ,">$arq") or Auxiliares::erro_abertura_arquivo($arq);
 	print ARQ "$n\n\n";
 	for($idf = 0;$idf <= $#fontes; $idf++) { # cada partefonte
 		$partefonte = $fontes[$idf];
@@ -237,22 +239,19 @@ sub imprime_regras {
 			elsif (Identifica::filtra_tipo1(\@todosal)) { $str = "T1\n$partefonte<=>$partealvo/(".$str; }
 			elsif (Identifica::filtra_tipo2(\@todosal)) {$str = "T2\n$partefonte<=>$partealvo/(".$str; }				
 			print ARQ $str,")/$peso/$freq\n";
-			# NAO 21/03/2007 So imprime o conjunto de restricoes se a regra eh ambigua, ou seja, peso < 1
-			#if ($peso < 1) {
-				# para cada conjunto de restricoes em @{${$$regras{$partefonte}[$ida]}[2]}
-				for($idres=0;$idres <= $#{${$$regras{$partefonte}[$ida]}[2]};$idres++) { 
-					@rfonte = @{${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[0]};
-					@ralvo = @{${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[1]};
-					@rbili = @{${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[2]};
-					($peso,$freq) = split('/',${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[$#{${${$$regras{$partefonte}[$ida]}[2]}[$idres]}]);				
-					if (($#rfonte >= 0) || ($#ralvo >= 0) || ($#rbili >= 0)) {
-						print ARQ "$peso/$freq\n";
-						if ($#rfonte >= 0) { print ARQ "\t",join("\n\t",@rfonte),"\n"; }
-						if ($#ralvo >= 0) { print ARQ "\t",join("\n\t",@ralvo),"\n"; }
-						if ($#rbili >= 0) { print ARQ "\t",join("\n\t",@rbili),"\n"; }
-					}
+			# para cada conjunto de restricoes em @{${$$regras{$partefonte}[$ida]}[2]}
+			for($idres=0;$idres <= $#{${$$regras{$partefonte}[$ida]}[2]};$idres++) { 
+				@rfonte = @{${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[0]};
+				@ralvo = @{${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[1]};
+				@rbili = @{${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[2]};
+				($peso,$freq) = split('/',${${${$$regras{$partefonte}[$ida]}[2]}[$idres]}[$#{${${$$regras{$partefonte}[$ida]}[2]}[$idres]}]);				
+				if (($#rfonte >= 0) || ($#ralvo >= 0) || ($#rbili >= 0)) {
+					print ARQ "$peso/$freq\n";
+					if ($#rfonte >= 0) { print ARQ "\t",join("\n\t",@rfonte),"\n"; }
+					if ($#ralvo >= 0) { print ARQ "\t",join("\n\t",@ralvo),"\n"; }
+					if ($#rbili >= 0) { print ARQ "\t",join("\n\t",@rbili),"\n"; }
 				}
-			#}
+			}
 			print ARQ "\n";
 		}
 	}
@@ -277,21 +276,21 @@ ReTraTos [options...]
 -targetfile|t       file with examples in target language (required)
 -type|ty            alignment type: 0, 1, 2 or 3 (all) (default=3)	
 -level|l            rules\' abstraction level(s) (default=pos)
--include_gra|ig     grammatical categories for which induce rules (default=all)
--exclude_gra|eg     grammatical categories for which do not induce rules (default=none)
--per_ident|pi       percentage for frequency threshold on pattern identification (default=0.0015)
+-include_gra|ig     PoS for which induce rules (default=all)
+-exclude_gra|eg     PoS for which do not induce rules (default=none)
+-per_ident|pi       % for frequency threshold on pattern ident. (df=0.0015)
 -filter|fi          determines if filter will be applied (default=no)
--per_filter|pf      percentage for frequency threshold on rule filtering (default=0.0015)
--sort|so            determines if sort will be done (default=no)
+-per_filter|pf      % for frequency threshold on rule filtering (df=0.0015)
+-sort|so            determines if sorting will be done (default=no)
 -remove|r           remove auxiliary files
 -verbose|v          verbose   
 -help|h|?           this guide
 
  Usage Example:
 
-ReTraTos -s pt.txt -t es.txt -f 0.0015 -ig pr,pr+det -eg cm -fi -so
+ perl ReTraTos.pl -s pt.txt -t en.txt -f 0.0007 -eg cm -fi -so
 
-Helena de Medeiros Caseli mai/2005-ago/2006
+ Helena de Medeiros Caseli mai/2005-ago/2006
 
 =cut
 

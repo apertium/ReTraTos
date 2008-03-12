@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-# 03/02/2006
-# 30/01/2007 (mudei o nome de lexico para lexico e inseri arquivo de entrada com rodape do lexico)
-
 ######################################################################################################
 # Programa indutor de lexico bilingue
 # Entrada: 
@@ -45,7 +42,7 @@ $freq = 1;
 				'targetfile|t=s' => \$arqalvo,
 				'beginning|b=s' => \$arqcab,
 				'ending|e=s' => \$arqrod,
-				'atrsfile|a=s'   => \$arqatrs,
+				'attrsfile|a=s'   => \$arqatrs,
 				'multifreq|f=n'  => \$freq,
 				'help|?'	 => \$help,) 
 		  || pod2usage(2);
@@ -60,7 +57,7 @@ $freq = 1;
 
 	# Le arquivo de atributos se o mesmo foi passado como parametro
 	if (defined($arqatrs)) {
-		open(ARQ,$arqatrs) or Auxiliares::mensagem_erro("ERRO: Nao eh possivel abrir o arquivo $arqatrs\n");
+		open(ARQ,$arqatrs) or Auxiliares::erro_abertura_arquivo($arqatrs);
 		while ($_ = <ARQ>) {
 			$_ =~ s/\n//;
 			push(@atrs,[split(/ /)]);
@@ -72,7 +69,7 @@ $freq = 1;
 	
 	@exemplosfonte = @exemplosalvo = %lexicobilingue = @atrs = ();
 	
-	Auxiliares::mensagem("\nPRE-PROCESSAMENTO\n\n");
+	Auxiliares::mensagem("\nPREPROCESSING\n\n");
 	
 	# Le exemplos de entrada
 	Entrada::le_exemplos($arqfonte,\@exemplosfonte);
@@ -80,13 +77,13 @@ $freq = 1;
 
 	
 	# Gera lexico bilingue
-	Auxiliares::mensagem("\nGERANDO LEXICO\n\n");	
+	Auxiliares::mensagem("\nGENERATING DICTIONARY\n\n");	
 	Lexico::gera_lexico_bilingue($freq,\@exemplosfonte,\@exemplosalvo,\@atrs,\%lexicobilingue);	
 	
 	# Imprime lexico bilingue
-	Auxiliares::mensagem("\nIMPRIMINDO LEXICO\n\n");
+	Auxiliares::mensagem("\nPRINTING DICTIONARY\n\n");
 	Lexico::imprime_lexico_bilingue($arq,$arqcab,$arqrod,\%lexicobilingue);	
-	print "\n\n";	
+	Auxiliares::mensagem("\n\n");	
 
 __END__
 
@@ -103,13 +100,13 @@ ReTraTos_lex - Bilingual dictionary inductor from aligned parallel texts
 -targetfile|t  file with examples in target language (required)
 -beginning|b   file with the beginning of a bilingual dictionary (required)
 -ending|e      file with the ending of a bilingual dictionary (required)
--atrsfile|a    file with information about atributes (optional)
+-attrsfile|a   file with information about attributes (optional)
 -multifreq|f   frequency threshold to filter multiword units (default=1)
 -help|?        this guide
 
  Usage Example:
 
- ReTraTos_lex -s pt.txt -t es.txt -b inicio.txt -e fim.txt
+ perl ReTraTos_lex.pl -s pt.txt -t en.txt -b cab.txt -e rod.txt -f 50
 
  Helena de Medeiros Caseli jan/2006
 
