@@ -1,0 +1,171 @@
+# Auxiliares - Package with ReTraTos and ReTraTos_lex tools
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Auxiliares - Perl extension to encapsulate ReTraTos auxiliary subrotines
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Auxiliares;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos auxiliary subrotines, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+#***********************************  ERROS   ************************************
+# Sub-rotina verifica_arquivo
+# Entrada: $arq (caminho para um arquivo qualquer)
+# Funcao: Verifica se o arquivo $arq pode ser aberto
+
+#*********************************************  GERAIS  *********************************************
+# Sub-rotina mensagem
+# Entrada: $msg (string com uma mensagem a ser impressa na tela)
+# Funcao: Imprime $msg na tela
+
+# Sub-rotina mensagem_erro
+# Entrada: $msg (string com uma mensagem a ser impressa na tela)
+# Funcao: Imprime $msg na tela e finaliza o programa retornando valor 1
+
+# Sub-rotina imprime_hora
+# Saida/Funcao: Retorna a hora local no formato HH:MM:SS
+
+# Sub-rotina maior
+# Entrada: @array (array de inteiros)
+# Saida: O maior valor presente no array de entrada
+# Funcao: Retorna o maior valor entre os presentes no array de entrada
+
+# Sub-rotina menor
+# Entrada: @array (array de numeros inteiros)
+# Saida: O menor dos elementos de @array
+# Funcao: Retorna o menor valor entre os presentes no array de entrada
+
+# Sub-rotina nome
+# Entrada: $arq (caminho para um arquivo)
+# Saida: Nome do arquivo sem extensoes nem diretorios e com $dir contendo o(s) diretorio(s)
+# Funcao: Retorna o nome de um arquivo cujo caminho foi passado como parametro sem extencoes e
+# armazena em $dir o(s) diretorio(s)
+
+# Sub-rotina char
+# Entrada: $c (um caractere)
+# Funcao: Verifica se o caractere eh um caractere de pontuacao (retorna 1) ou nao (retorna 0)
+
+# Sub-rotina tokens_to_posicao
+# Entrada: $parte (array de tokens para os quais se deseja encontrar as posicoes)
+#          $todo (array de todos os tokens no qual se deseja buscar as posicoes dos tokens em $parte)
+#          $ngram (se 1, os tokens em $parte devem ocorrer em posicoes consecutivas de $todo)
+# Saida:   $parte (array de tokens alterado para armazenar suas posicoes em $todo)
+# Funcao: Retorna em @$parte as posicoes dos tokens no array $todo
+
+#*********************************************  ARRAYS  *********************************************
+# Sub-rotina pertence
+# Entrada: $elemento e $array
+# Funcao: Verifica se $elemento esta presente em @$array
+
+# Sub-rotina posicao
+# Entrada: $elemento (elemento (string) para o qual se deseja descobrir a posicao em @$array)
+#          $array    (array no qual o elemento pode ou nao estar presente)
+#          $offset   (posicao inicial da busca)
+# Funcao: Encontra a posicao de $elemento em @$array comecando a busca por $offset, se ele nao estiver
+# em @$array devolve -1
+
+# Sub-rotina posicao_diferente
+# Entrada: $array1 (array de strings)
+#          $array2 (array de strings)
+#          $offset (posicao a partir da qual a busca deve iniciar)
+# Saida: posicao do valor que difere entre $array1 e $array2 a partir de $offset
+# Funcao: Determina a posicao, a partir de $offset, do primeiro elemento que difere entre $array1 e
+# $array2.
+
+# Sub-rotina array_igual
+# Entrada: $array1 e $array2
+# Funcao: Verifica se dois arrays sao iguais
+
+# Sub-rotina insere_array
+# Entrada: $elemento que se deseja inserir em @$array e $array
+# Funcao: Insere o $elemento em @$array se ele nao estiver presente no mesmo
+
+# Sub-rotina insere_exemplo
+# Entrada: $infoexe   (array com as informacoes do exemplo, indice e posicoes fonte e alvo dos itens)
+# Saida: $array (array de array com informacoes de exemplos) alterado apos a insercao de $infoexe, 
+#                caso este ainda nao pertenca ao array
+# Funcao: Insere em $array o elemento $infoexe, se este ainda nao estiver presente
+
+# Sub-rotina remove_array
+# Entrada: $elemento que se deseja remover de @$array e $array
+# Funcao: Remove o $elemento de @$array se ele estiver presente no mesmo
+
+# Sub-rotina remove_repetidos
+# Entrada/Saida: $array (array de elementos)
+# Funcao: Remove os elementos repetidos de um array
+
+# Sub-rotina consecutivos
+# Entrada: $array (array com numeros inteiros)
+# Saida: 1 se o array eh formado apenas por numeros consecutivos, 0 caso contrario
+# Funcao: Verifica se o array eh formado por numeros consecutivos
+
+# Sub-rotina converte_stratr_arrays
+# Entrada: $atr (string com uma sequencia de atributos)
+# Saida: array com os atributos
+# Funcao: Converte a sequencia de atributos de entrada em elementos de um array
+# Exemplo1: $atr = NC/<def><m><sg>/<m><sg>
+# Saida1: @arrayatr = ((NC),(def,m,sg),(m,sg))
+# Exemplo2: $atr = <pp><f><pl>/NC+<def><f><sg>	
+# Saida2: @arrayatr = ((pp,f,pl),(NC,+,def,f,sg))
+# Exemplo3: $atr = NC/<def><f><pl|sg>/<f><pl|sg>
+# Saida3: @arrayatr = ((NC),(def,f,pl|sg),(f,pl|sg))
+
+#*******************************************  MAPEAMENTO  *******************************************
+# Sub-rotina mapeia_valor
+# Entrada: $exemplos (array de exemplos)
+#          $indexe   (indice do exemplo)
+#          $pos      (posicao do item em $exemplos[$indexe] para o qual sera retornado o valor do
+#                     campo $campo)
+#          $campo    (campo(s) para o(s) qual(is) se deseja mapear os valores do bloco)
+#          $icategs  (categorias gramaticais para as quais as regras serao induzidas)
+# Saida: Valores de todos os campos em $campo (separados por ,) para o item no exemplo $indexe na
+#        posicao $pos. Atribui tb o valor lexical ao item em $pos, se a categoria gramatical deste
+#        pertencer a $icategs
+# Funcao: Retorna o valor para os campos em $campo do item na posicao $pos em $indexe
+
+#*******************************************  FILTRO  *******************************************
+# Sub-rotina filtra_categorias_gramaticais
+# Entrada: $itens  (string de categorias gramaticais separadas por espaco)
+#          $categs (string de categorias gramaticais a serem consideradas na filtragem, separadas
+#                   por ,)
+#          $acao   (flag que determina como a filtragem deve ser realizada: 1 inclusao, 0 exclusao)
+# Saida: 1 se a string de itens satisfaz as condicoes do filtro e 0 caso contrario
+# Funcao: Verifica se a sequencia de categorias gramaticais em $itens satisfizaz as condicoes do
+# filtro de acordo com as categorias gramaticais especificadas em $categs
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

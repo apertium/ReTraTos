@@ -1,0 +1,123 @@
+# Gera - Package with ReTraTos tool
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Gera - Perl extension to encapsulate ReTraTos subrotines for rule generation
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Gera;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos subrotines for rule generation, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+# Sub-rotina regras
+# Entrada: $campo  (nivel de abstracao para o qual as regras estao sendo geradas)
+#          $tipo   (tipo de bloco de alinhamento a partir do qual as regras estao sendo geradas)
+#          $exef   (array de exemplos fonte)
+#          $exea   (array de exemplos alvo)
+#          $padbil (hash de padroes bilingues)
+# Saida: $regras (hash com as regras geradas)
+# Funcao: Para cada um dos padroes bilingues cria e generaliza restricoes entre atributos fonte, alvo e bilingues gerando as
+# regras de traducao
+
+# Sub-rotina ocorre_restricao
+# Entrada: $res   (um restricao de valor ou concordancia/valor)
+#          $todas (conjunto de restricoes de valor ou concordancia/valor)
+# Saida: 1 se $res ocorre em $todas, 0 caso contrario
+# Funcao: Verifica se $res ocorre em $todas
+
+# Sub-rotina cria_restricoes
+# Entrada: $infoexe (array com informacoes de exemplos)
+#          $exef    (array de exemplos fonte)
+#          $exea    (array de exemplos alvo)
+#          $charf   (caractere usado para indicar itens fonte)
+#          $chara   (caractere usado para indicar itens alvo)
+# Saida: %opres (hash com as opcoes de restricoes criadas para um dado padrao bilingue)
+# Funcao: Cria as opcoes de restricoes mono e bilingues e remove as restricoes monolingues
+# representadas nas restricoes bilingues
+
+# Sub-rotina restringe_monolingue
+# Entrada: $atr  (string com uma sequencia de atributos)
+#          $char (caractere usado para indicar o lado das restricoes)
+# Saida: @res (array com as restricoes monolingues entre os valores dos atributos em $atr)
+# Funcao: Determina restricoes entre atributos verificando se ha valores iguais entre seus elementos.
+# Cada restricao possui indicacoes da posicao do item (<pos_item>) e a posicao do atributo (<pos_atr>)
+# no formato: $char<pos_item>_<pos_atr>
+# Exemplo:
+#   Entrada: $atr = NC/<def><m><sg>/<m><sg> e $char = X
+#   Saida: (X2_2=X3_1=m,X2_3=X3_2=sg)
+
+# Sub-rotina restringe_bilingue
+# Entrada: $atrf  (string com uma sequencia de atributos fonte)
+#          $atra  (string com uma sequencia de atributos alvo)
+#          $charf (caractere usado para indicar as restricoes fonte)
+#          $chara (caractere usado para indicar as restricoes alvo)
+# Saida: @res (array com as restricoes bilingues entre os valores dos atributos em $atrf e $atra)
+# Funcao: Determina restricoes entre atributos verificando se ha valores iguais entre seus elementos.
+# Cada restricao possui indicacoes da posicao do item (<pos_item>) e a posicao do atributo (<pos_atr>)
+# no formato: $charf<pos_itemf>_<pos_atrf> = $chara<pos_itema>_<pos_atra>
+# Exemplo:
+#   Entrada: $atrf = NC/<def><m><sg>/<m><sg> e $charf = X
+#            $atra = NC/<m><sg> e $chara = Y
+#   Saida: (X2_2,X3_1=Y2_1=m,X2_3,X3_2=Y2_2=sg)
+
+# Sub-rotina trata_valores
+# Entrada: $val1 e $val2 (valores de atributo a serem unidos)
+# Saida: @valores (array com os valores em $val1 e $val2, sem repeticao)
+# Funcao: Retorna os valores em $val1 e $val2 sem repeticao
+# Exemplo: 
+#    Entrada: $val1 = sg|pl e $val2 = sg
+#    Saida: @valores = (sg,pl)
+
+# Sub-rotina generaliza
+# Entrada: $res1 e $res2 (duas restricoes para as quais se tentara generalizar os valores)
+# Saida: $val (valor generalizado) 
+#        $gen (restricoes generalizadas) ou "-" (quando a generalizacao nao for possivel)
+# Funcao: Tenta generalizar os valores em $res1 e $res2 verificando se elas diferem em apenas um elemento
+# do array de restricoes que representam, unindo os valores que diferem neste elemento. (Atualmente, NAO
+# Eh capaz de lidar com valores generalizados, ou seja, considera pl|sg uma generalizacao de pl.)
+# Exemplo: 
+#   Entrada: $res1 = X1_1=X2_1=m&X1_2=X2_2=pl|sg e $res2 = X1_1=X2_1=f&X1_2=X2_2=pl(|sg)
+#   Saida: $gen = X1_1=X2_1=m|f&X1_2=X2_2=pl|sg
+
+# Sub-rotina generaliza_restricoes
+# Entrada/Saida: $opres (hash com as opcoes de restricoes)
+# Funcao: Generaliza as opcoes de restricoes em $opres. O hash $opres tem como chave as restricoes
+# fonte, alvo e bilingue separadas por / e como valor o array com informacoes dos exemplos nos quais
+# essas restricoes ocorrem. A generalizacao sera realizada se for possivel generalizar as restricoes
+# fonte (ou elas forem iguais), alvo (ou elas forem iguais) e bilingues (ou elas forem iguais).
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

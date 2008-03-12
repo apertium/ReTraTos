@@ -1,0 +1,208 @@
+# Lexico - Package with ReTraTos_lex tool
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Lexico - Perl extension to encapsulate ReTraTos Lexicon subrotines
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Lexico;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos subrotines to handle lexicon files, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+# Sub-rotina gera_lexico_bilingue
+# Entrada: $exef (array de exemplos fonte)
+#          $exea (array de exemplos alvo)
+#          $atrs (array de arrays com valores dos atributos de genero e numero)
+# Saida: $lexlbil (hash com o lexico bilingue)
+# Funcao: Gera o lexico bilingue para todas as palavras em $exef e $exea         
+
+# Sub-rotina gera_lexico
+# Entrada: $exef (array de exemplos fonte)
+#          $exea (array de exemplos alvo)
+# Saida: $lex (hash com o lexico bilingue)
+# Funcao: Gera o lexico bilingue para todas as palavras em $exef e $exea tendo como fonte 
+# as palavras em $exef e como alvo as em $exea. O lexico de saida tem o formato:
+# %lex = 
+# {$basef.'/'.$categf} = 
+#   {$atrf1}
+#     {$basea1.'/'.$catega1} = 
+#         [0] = frequencia
+#         [1] = 
+#                {$atra1} = frequencia
+#                {$atra2} = frequencia
+#                ...
+#     {$basea2.'/'.$catega2} = ...
+#   {$atrf2} ...
+
+# Sub-rotina resolve_ambiguidades
+# Entrada: $fonte (palavra fonte)
+#          $lex   (lexico bilingue no sentido fonte-alvo)
+# Saida: %aux (hash com a melhor opcao alvo para cada combinacao de atributos fonte)
+# Funcao: Para cada combinacao de atributos fonte, determina qual eh a melhor opcao alvo
+# (a mais frequente) e qual eh a melhor combinacao de atributos alvo (tb a mais frequente)
+# para esta opcao. O hash de saida tem como chave cada um dos atributos fonte ($atrf) e 
+# como valor a melhor opcao alvo ($alvo) e a melhor combinacao de atributos alvo ($atra)
+
+# Sub-rotina processa_bilingue
+# Entrada: $lexf (lexico gerado no sentido fonte-alvo)
+#          $lexa (lexico gerado no sentido alvo-fonte)
+# Saida: $lexbil (hash com o lexico bilingue com entradas desambiguadas e nos dois sentidos)
+# Funcao: Para cada palavra fonte em $lexf verifica qual a melh
+
+# Sub-rotina insere_entrada_bilingue
+# Entrada: $pfonte (palavra fonte)
+#          $palvo  (palavra alvo)
+#          $atrf   (combinacao de atributos fonte)
+#          $atra   (combinacao de atributos alvo)
+#          $sent   (sentido da traducao)
+# Saida: $lex (lexico bilingue alterado apos a insercao de uma nova entrada)
+# Funcao: Insere no lexico bilingue ($lex) uma nova entrada para palavra fonte $pfonte em um determinado
+# sentido $sent (chave), com a combinacao de atributos $atrf, a palavra alvo $palvo e a combinacao de 
+# atributos $atra (valor)
+
+# Sub-rotina generaliza
+# Entrada: $atr1 (string com uma combinacao de atributos)
+#          $atr2 (string com outra combinacao de atributos)
+#          $val  (string com os valores generalizados)
+# Saida: $gen (string com a generalizacao das combinacoes de atributos $atr1 e $atr2)
+# Funcao: Generaliza, as combinacoes de atributos passadas como parametro, quando possivel, retornando
+# a string com a combinacao generalizada ou uma string vazia quando nao for possivel generalizar
+
+# Sub-rotina generaliza_atrs
+# Entrada: $atr1 (string com uma combinacao de atributos)
+#          $atr2 (string com outra combinacao de atributos)
+#          $val  (string com os valores generalizados)
+# Saida: $gen (string com a generalizacao das combinacoes de atributos $atr1 e $atr2)
+# Funcao: Generaliza, as combinacoes de atributos passadas como parametro, quando possivel, retornando
+# a string com a combinacao generalizada ou uma string vazia quando nao for possivel generalizar
+
+# Sub-rotina generaliza_opcoes
+# Entrada: $opcoes (array com as opcoes de combinacoes de atributos)
+# Saida: $opcoes (array alterado)
+# Funcao: Generaliza as combinacoes de atributos presentes em $opcoes, quando possivel
+
+# Sub-rotina generaliza_bilingue
+# Entrada/Saida: $lex (lexico bilingue com entradas nos dois sentidos)
+# Funcao: Generaliza as combinacoes de atributos nas entradas do lexico bilingue e substitui as opcoes 
+# com atributos fonte e alvo iguais por "NC|NC" o que sera ocultado na impressao
+
+#**************************************************************************************************
+#                                               LIMPEZA
+#**************************************************************************************************
+# Sub-rotina limpa
+# Entrada: $atrf     (combinacao de atributos fonte)
+#          $atra     (combinacao de atributos alvo)
+#          $continua (opcao para continuar a limpeza de atributos
+# Saida: 1 se os atributos foram limpados e 0 caso contrario
+# Funcao: Limpa os atributos que sao iguais nos lados fonte e alvo
+
+# Sub-rotina limpa_atrs
+# Entrada: $atrsf (combinacoes de atributos fonte)
+#          $atrsa (combinacoes de atributos alvo)
+# Saida: 1 se os atributos foram limpados e 0 caso contrario
+# Funcao: Limpa os valores iguais nos atributos fonte e alvo
+
+# Sub-rotina limpa_atributos
+# Entrada: $lexbil (hash com o lexico bilingue)
+# Saida: $lexbil alterado apos a limpeza dos atributos iguais nos lados fonte e alvo
+# Funcao: Remove das entradas as especificacoes dos valores de atributos iguais nos lados fonte e alvo
+
+
+#                                      ATENCAO
+
+# Todas as sub-rotinas apresentadas em seguida sao altamente dependentes do formalismo de representacao
+# adotado para o lexico bilingue (o mesmo usado no Apertium e descrito no manual de 29/07/2005)
+
+# Sub-rotina a_determinar
+# Entrada: $sent   (sentido no qual esta traducao eh valida)
+#          $opcoes (array com as opcoes de combinacoes de atributos)
+#          $atrs   (array com os valores do atributo sendo tratado)
+# Saida: $opcoes alterado apos o tratamento dos valores a determinar
+# Funcao: Cria entradas especificas para tratar os casos de genero/numero a definir, quando possivel
+
+# Sub-rotina trata_gd_nd
+# Entrada: $dic  (hash com o lexico bilingue)
+#          $atrs (array com os valores dos atributos de genero e numero)
+# Saida: $dic alterado
+# Funcao: Percorre o hash do lexico a procura de entradas com valores gerais e enumerados para
+# genero e numero de acordo com os valores em $atrs. Quando possivel, cria entradas especificas 
+# para tratar o problema de genero e numero a determinar (GD e ND, respectivamente)
+
+# Sub-rotina formata_atrs
+# Entrada/Saida: $atrs (sequencia de atributos)
+# Funcao: Formata os atributos em $atrs colocando cada um no formato <s n=atr>
+
+# Sub-rotina formata_info
+# Entrada: $b (forma base)
+#          $c (categoria gramatical)
+#          $a (sequencia de atributos)
+# Saida: $str (string formatada como conteudo de um elemento <l> ou <r>)
+# Funcao: Retorna uma string com as informacoes morfologicas formatadas de acordo com as
+# especificacoes do sistema Apertium
+
+# Sub-rotina multipalavra_tipo2
+# Entrada: $bases  (array com formas base)
+#          $categs (array com categorias gramaticais)
+#          $atrs   (array com as sequencias de atributos)
+# Saida: $saida (string formatada com as formas base, categorias e atributos)
+# Funcao: Formata o conjunto de palavras que forma a unidade multipalavra do tipo 2 (Apertium) copiando
+# as formas base, suas categorias gramaticais e atributos (separados por <j/>)
+
+# Sub-rotina multipalavra_tipo3
+# Entrada: $bases  (array com formas base)
+#          $categs (array com categorias gramaticais)
+# Saida: $saida (string formatada com as formas base e a categoria do verbo)
+# Funcao: Formata o conjunto de palavras que forma a unidade multipalavra do tipo 3 (Apertium) copiando
+# as formas base do verbo e tudo o que lhe segue (separados por <b/>) e mantendo apenas a categoria
+# gramatical do verbo. A etiqueta <g> também é usada para indicar que as palavras que vêm depois do
+# verbo devem ser tratadas como um grupo fixo
+
+# Sub-rotina trata_multipalavra
+# Entrada: $base  (string com as formas base de todas as palavras que formam a unidade multipalavra)
+#          $categ (string com as categorias gramaticais de todas as palavras que formam a unidade multipalavra)
+#          $atr   (string com as sequencias de atributos de todas as palavras que formam a unidade multipalavra)
+# Saida: String formatada contendo todas as informacoes morfologicas referentes a unidade multipalavra
+# sendo processada, formatada como uma multipalavra do tipo 2 (contracoes, verbos com pronome enclitico) ou 3
+# multipalavra com flexao intercalada
+
+# Sub-rotina imprime_lexico_bilingue
+# Entrada: $arq    (arquivo no qual o lexico sera impresso)
+#          $lexbil (hash com o lexico bilingue nos dois sentidos)
+# Funcao: Imprime o lexico bilingue em $lexbil no arquivo $arq seguindo o formalismo dos lexicos
+# bilingues usado no Apertium
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

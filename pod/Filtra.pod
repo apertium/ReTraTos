@@ -1,0 +1,154 @@
+# Filtra - Package with ReTraTos tool
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Filtra - Perl extension to encapsulate ReTraTos subrotines for rule filtering
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Filtra;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos subrotines for rule filtering, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+# Sub-rotina regras
+# Entrada: $regras (hash com as regras)
+#          $exef   (array de exemplos fonte)
+#          $por    (porcentagem a ser multiplicada pela frequencia da melhor opcao)
+# Saida: $regras (hash alterado apos filtragem)
+# Funcao: Filtra as regras ambiguas verificando valores unicos para restricoes e valores
+# lexicais, nessa ordem, nos exemplos a partir dos quais a regra foi gerada. Se houver um 
+# ou mais valores que ocorrem em apenas uma das varias opcoes alvo, estes serao inseridos 
+# como restricao da opcao na qual ocorrem gerando uma nova regra especifica para estes casos.
+# Caso contrario, apenas a opcao mais frequente (a primeira) sera mantida.
+
+#**************************************  ORDENACAO DE PARTES ALVO ************************************
+# Sub-rotina ordena_filtra_partes_alvo
+# Entrada: $array (array coma as possiveis partes alvo de uma regra)
+#          $por   (porcentagem da maior frequencia a ser considerada no filtro)
+# Saida: $array (alterado apos ser ordenado decrescentemente por # de exemplos)
+#        frequencia minima para que uma opcao alvo seja filtrada
+# Funcao: Ordena as opcoes alvo, decrescentemente, de acordo com o numero de exemplos nos quais
+# cada opcao alvo ocorre alinhada com uma dada opcao fonte e elimina aquelas opcoes com frequencia
+# menor do que $por*$freqmelhor. Ao final dessa rotina, a melhor opcao alvo (mais frequente) estara 
+# em $$array[0], a segunda melhor em $$array[1] e assim por diante
+
+#*************************************  FILTRAGEM POR ESCOPO ******************************************
+# Sub-rotina filtra_escopo
+# Entrada: $partefonte (parte fonte da regra sendo filtrada)
+#          $regras     (hash com todas as regras induzidas)
+#          $posicao    (posicao da opcao alvo sob estudo)
+#          $escopo     (array com as posicoes que devem ser consideradas no filtro)
+# Saida: 1 se o filtro eh satisfeito, 0 caso contrario
+# Funcao: Verifica se os itens lexicais sob estudo (nas posicoes em $escopo) sao diferentes na
+# melhor opcao alvo (na posicao 0) e na opcao alvo em $posicao. Se sim o filtro tem sucesso (1), 
+# caso contrario o filtro falha (0)
+
+# Sub-rotina escopo_lexicalizado
+# Entrada: $partefonte (parte fonte da regra sendo filtrada)
+# Saida: $escopo (array com as posicoes fonte correspondentes aos itens lexicalizados)
+# Funcao: Delimita o escopo do filtro a aquelas posicoes fontes com itens lexicalizados
+
+#*************************************  FILTRAGEM POR VALORES LEXICAIS ********************************
+# Sub-rotina valores_lexicais
+# Entrada: $res (array com as opcoes de restricoes)
+#          $pos (posicao do elemento para o qual se deseja retornar os valores lexicais)
+#          $exe (array de exemplos)
+# Saida: $saida (array com os valores lexicais do item na posicao $pos do array de exemplos $exe para
+#                os exemplos de cada opcao de restricao em $res)
+# Funcao: Retorna todos os valores lexicais para o elemento na posicao $pos para o conjunto de
+# restricoes $res
+
+# Sub-rotina insere_info	
+# Entrada: $arrayexe (array com as informacoes dos exemplos, indice e posicoes fonte e alvo dos itens)
+#          $exe      (exemplo a ser inserido no array $arrayexe)
+#          $arrayuni (array de valores lexicais unicos)
+#          $uni      (valor lexical a ser inserido no array $arrayuni)
+# Saida: $arrayexe e $arrayuni alterados apos a insercao de $exe e $uni
+# Funcao: Insere em $arrayexe o elemento $exe e em $arrayuni o elemento $uni, se eles ainda nao
+# estiverem presentes
+
+# Sub-rotina valores_unicos
+# Entrada: $res      (array com as opcoes de restricoes)
+#          $pos      (posicao do elemento para o qual se deseja retornar os valores lexicais)
+#          $exe      (array de exemplos)
+#          $melhores (array com os valores lexicais das opcoes melhores do que a opcao sob estudo)
+# Saida: $opres  (hash com as restricoes fonte, alvo e bilingues como chave e o array de exemplos como
+#                 valor)
+#        $unicos (array de valores lexicais que so ocorrem na opcao sob estudo)
+#        quantidade de exemplos nos quais os valores unicos em $unicos ocorrem
+# Funcao: Verifica quais valores lexicais so ocorrem na opcao alvo sob estudo (cujo conjunto de opcoes
+# de restricao esta em $res) retornando o numero total de exemplos nos quais os valores lexicais
+# unicos em $unicos ocorrem
+
+# Sub-rotina busca_posicao_diferente
+# Entrada: $partefonte (parte fonte da regra ambigua)
+#          $regras     (hash com todas as regras)
+#          $opalvo     (opcao alvo sob estudo)
+# Saida: $pos (posicao do item diferente entre a opcao alvo $opalvo e a melhor)
+# Funcao: Busca a posicao diferente entre os alinhamentos ou partes alvo da melhor opcao alvo e da
+# opcao alvo em $opalvo
+
+# Sub-rotina filtra_valores_lexicais
+# Entrada: $partefonte (parte fonte de uma regra a ser filtrada)
+#          $regras     (hash com as regras)
+#          $posicao    (posicao da opcao alvo a ser filtrada)
+#          $exef       (array de exemplos fonte)
+#          $minfreq    (frequencia minima para que uma nova regra seja gerada)
+# Saida: $regras (hash alterado apos filtragem) e 
+#        1 caso o filtro tenha sucesso e 0 caso contrario
+# Funcao: Verifica se eh possivel criar uma nova regra que se diferencie das melhores (mais frequentes,
+# que antecedem $posicao) por seus valores lexicais unicos. So ira criar tal regra se ela tiver uma
+# frequencia maior ou igual a $minfreq
+
+#*************************************  FILTRAGEM POR RESTRICOES *************************************
+# Sub-rotina bili_to_mono
+# Entrada: $bili (uma restricao bilingue)
+#          $pos  (a posicao que se deseja retornar, se 0 eh fonte, se 1 eh alvo)
+# Saida: Uma restricao monolingue fonte (se $pos=0) ou alvo (se $pos=1)
+# Funcao: Retorna uma restricao monolingue derivada da restricao bilingue $bili
+
+# Sub-rotina filtra_restricoes
+# Entrada: $opcoes  (array com as opcoes alvo)
+#          $posicao (posicao da opcao alvo a ser filtrada)
+#          $minfreq (frequencia minima para que uma nova regra seja gerada)
+# Saida: 1 se a filtragem foi realizada com sucesso, 0 caso contrario        
+# Funcao: Busca valores unicos nas restricoes da opcao alvo na posicao $posicao do 
+# array $opcoes considerando que a melhor opcao eh que ocupa a primeira posicao no 
+# array $opcoes ($$opcoes[0]). So ira criar tal regra se ela tiver uma frequencia 
+# maior ou igual a $minfreq. Se todas essas exigencias forem satisfeitas retorna 1,
+# caso contrario, retorna 0
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

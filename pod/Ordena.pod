@@ -1,0 +1,90 @@
+# Ordena - Package with ReTraTos tool
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Ordena - Perl extension to encapsulate ReTraTos subrotines for rule sorting
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Ordena;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos subrotines for rule sorting, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+#**************************************  ORDENACAO DE REGRAS *****************************************
+# Sub-rotina regras
+# Entrada: $regras (hash com as regras finais)
+# Saida: $regras alterado para conter peso e frequencia de regras, opcoes alvo e conjuntos de
+#        restricoes; todos ordenados por ordem decrescente de frequencia
+# Funcao: Atribui pesos e frequencias a cada regra, opcao alvo e conjunto de restricoes e os ordena do
+# mais frequente para a menos frequente
+
+#*********************************  CALCULO DE FREQUENCIAS *******************************************
+# Sub-rotina frequencia_restricao
+# Entrada: $restricao (um conjunto de restricoes de uma opcao alvo de uma regra)
+# Saida: frequencia do conjunto de restricoes $restricao
+# Funcao: Retorna como frequencia do conjunto de restricoes $restricao o numero de exemplos nos quais
+# ele ocorre
+
+# Sub-rotina frequencia_opcao
+# Entrada: $opcao (uma opcao alvo de uma regra)
+# Saida: frequencia da opcao alvo $opcao
+# Funcao: Retorna como frequencia da opcao alvo $opcao o numero de exemplos nos 
+# quais ela ocorre e atribui a frequencia de cada conjunto de restricoes dessa opcao como o ultimo
+# elemento do conjunto de restricoes
+
+# Sub-rotina frequencia_opcoes
+# Entrada: $opcoes (opcoes alvo de uma regra)
+# Saida: frequencia da regra $regra
+# Funcao: Retorna como frequencia da regra $regra o numero de exemplos nos quais ela ocorre e atribui
+# a frequencia de cada opcao alvo dessa regra como o ultimo elemento do conjunto de opcoes
+
+# Sub-rotina calcula_frequencias
+# Entrada: $regras (hash com as regras finais)
+# Saida: frequencia de todas as regras
+# Funcao: Retorna como frequencia de todas as regras ($regras) o numero de exemplos nos quais elas
+# ocorrem e atribui a frequencia de cada regra como o ultimo elemento do conjunto de opcoes alvo dessa
+# regra
+
+#********************************  ATRIBUICAO DE PESOS/ORDENACAO *************************************
+# Sub-rotina atribui_pesos_ordena
+# Entrada: $regras   (hash com as regras finais)
+#          $totalreg (frequencia total de todas as regras em $regras) 
+# Saida: hash de regras alterado apos a insercao de pesos e ordenacao
+#        quantidade de regras ordenadas e para as quais foram atribuidos pesos
+# Funcao: Atribui os pesos para regras, opcoes alvo e conjuntos de restricoes e ordena
+# conjuntos de opcoes alvo e restricoes. As regras sao ordenadas por suas partes fonte
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

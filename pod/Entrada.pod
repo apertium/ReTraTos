@@ -1,0 +1,70 @@
+# Entrada - Package with ReTraTos and ReTraTos_lex tools
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Entrada - Perl extension to encapsulate ReTraTos subrotines to deal with input
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Entrada;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos subrotines to deal with input files, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+# Subrotina le_exemplos
+# Entrada: $arq (arquivo com exemplos a serem lidos)
+# Saida: $exe (array com os exemplos lidos ja com as informacoes separadas por campos especificos)
+# Funcao: Armazena as sentencas (exemplos) do arquivo de entrada em um array por meio da subrotina le_sentenca (chamada para cada sentenca).
+# Estrutura de dados de saida: @$exe = 
+#   [0] = %sent (hash com a primeira sentenca retornada por le_sentenca
+#   [1] = %sent (hash com a segunda sentenca retornada por le_sentenca
+#   ...
+
+# Subrotina le_sentenca
+# Entrada: $sent (sentenca fonte/alvo etiquetada e alinhada)
+#          $id   (indice do exemplo no qual esta sentenca ocorre)
+# Saida: %hashsent (hash com as informacoes da sentenca $sent armazenadas em seus respectivos campos)
+# Funcao: Retorna um hash com as informacoes da sentenca $sent separadas por seus respectivos campos.
+#   1. Separa os tokens da sentenca em: forma superficial, item lexical, etiqueta de POS, atributos da etiqueta e alinhamento. 
+#   2. Armazena estas informacoes, para cada token, em um hash (%hashsent).
+# Exemplo: %hashsent =
+#		  {sup} = @array de tokens (strings)
+#     {lex} = @array de tokens (strings)
+#     {pos} = @array de etiquetas (strings)
+#     {atr} = @array de atributos (strings) para cada etiqueta 
+#     {ali} = @array de indices de alinhamentos (strings que sao numeros de 0 ate o numero de tokens do exemplo)
+
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

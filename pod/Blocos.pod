@@ -1,0 +1,114 @@
+# Blocos - Package with ReTraTos tool
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Blocos - Perl extension to encapsulate ReTraTos alignment blocks subrotines
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Blocos;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos blocks subrotines, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+# Sub-rotina processa_tipo_0
+# Entrada: $fim   (posicao passada por referencia)
+#          $array (array de posicoes passado por referencia)
+# Saida: $fim atualizado
+# Funcao: Incrementa a posicao $fim enquanto o alinhamento for de omissao
+
+# Sub-rotina processa_tipo_1
+# Entrada: $fimf  (posicao fonte passada por referencia)
+#          $fonte (array de posicoes fonte passado por referencia)
+#          $fima  (posicao alvo passada por referencia)
+#          $alvo  (array de posicoes alvo passado por referencia)
+#          $fim2f (posicao fonte final do bloco 2 passada por referencia)
+#          $fim2a (posicao alvo final do bloco 2 passada por referencia)
+# Saida: $fimf, $fima, $fim2f e $fim2a atualizadas
+# Funcao: Incrementa as posicoes $fimf e $fima enquanto estiverem alinhadas de maneira que respeita a 
+# ordem de ocorrencia. Armazena em $fim2f e $fim2a os maiores valores encontrados durante esse processo
+
+# Sub-rotina incrementa_menores
+# Entrada: $ind   (indice a ser incrementado passado por referencia)
+#          $array (array de posicoes passado por referencia)
+#          $indc  (indice correspondente no lado paralelo)
+# Saida: 1 se os valores foram incrementados e 0, caso contrario
+# Funcao: Incrementa $ind enquanto este estiver alinhado com uma posicao menor do que $indc
+
+# Sub-rotina aplica_janela
+# Entrada: $ini    (posicao inicial de um bloco)
+#          $fim    (posicao final de um bloco)
+#          $janela (quantidade de posicoes para aumentar o bloco)
+#          $limsup (limite superior do bloco)
+# Saida: $ini e $fim alterados para conter novos valores
+# Funcao: Aumenta o bloco decrementando de $ini $janela posicoes, se possivel (0 caso contrario, e
+# incrementando de $fim $janela posicoes, se possivel ($limsup caso contrario)
+
+# Sub-rotina cria_bloco
+# Entrada: $indexe (indice do exemplo em que o bloco sendo criado esta presente)
+#          $ini    (posicao inicial do bloco)
+#          $fim    (posicao final do bloco)
+#          $tipo   (tipo do bloco)
+# Saida: $blocos (hash com blocos alterado apos a insercao de um novo bloco)
+# Funcao: Cria um bloco de alinhamento e o armazena em $blocos tendo como chave $tipo e como valor um
+# array com o indice do exemplo ($indexe) e as posicoes iniciais e finais ($ini e $fim,
+# respectivamente) do bloco
+
+# Sub-rotina cria_blocos
+# Entrada: $janela   (numero de posicoes antes e depois de uma omissao)
+#          $tammin   (tamanho minimo de um bloco)
+#          $indexe   (indice do exemplo sendo processado)
+#          $exefonte (array de alinhamentos fonte)
+#          $exealvo  (array de alinhamentos alvo)
+# Saida:   $blofonte (hash com blocos de exemplos fonte)
+#          $bloalvo  (hash com blocos de exemplos alvo)
+# Funcao: Cria blocos de alinhamentos e os armazena em hashes ($blofonte e $bloalvo) tendo como 
+# chave o tipo do bloco e como valor um array com as posicoes inicial e final de cada bloco. Se
+# o bloco for do tipo 0 $janela itens ah esquerda e $janela itens ah direita tb serao inseridos
+# no bloco
+
+# Sub-rotina imprime_blocos
+# Entrada: $exemplos (array de exemplos)
+#          $blocos   (array de blocos de um determinado tipo)
+#          $icategs  (categorias gramaticais que devem estar presentes nos blocos a serem impressos)
+#          $campo    (nivel de abstracao no qual se deseja buscar os padroes)
+#          $tipo     (tipo do bloco de alinhamento $bloco: 0, 1 ou 2)
+#          $arq      (arquivo no qual os blocos de exemplos serao impressos)
+# Saida: Imprime em $arq os blocos de exemplos a partir dos quais os padroes serao identificados
+# Funcao: Imprime em $arq todos os blocos ($blocos) de exemplos ($exemplos) de um determinado nivel de
+# abstracao ($campo) que contenham as categorias especificadas em $icategs. Os blocos que nao contem
+# nenhuma dessas categorias serao eliminados de $blocos e nao serao impressos
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut

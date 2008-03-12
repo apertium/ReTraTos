@@ -1,0 +1,169 @@
+# Identifica - Package with ReTraTos tool
+# Copyright (C) 2005  Helena de Medeiros Caseli
+#
+# This package is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation. 
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU General Public License for 
+# more details.
+#
+
+=head1 NAME
+
+ReTraTos::Identifica - Perl extension to encapsulate ReTraTos subrotines for pattern identification
+
+=head1 SYNOPSIS
+
+  use ReTraTos::Identifica;
+
+=head1 DESCRIPTION
+
+This module encapsulates the ReTraTos subrotines for pattern identification, making them
+accessible using Perl.
+
+=cut
+The subrotine documentation presented below is written in Portuguese
+
+#*******************************************  IDENTIFICACAO  ******************************************
+# Sub-rotina identifica_padroes
+# Entrada: $entrada (arquivo com sequencias de itens separados por espaço)
+#          $minfreq (frequencia minima de uma sequencia para que esta seja considerada um padrao)
+#          $tammin  (tamanho minimo do padrao)
+#          $tammax  (tamanho maximo do padrao)
+# Saida: $saida (arquivo no qual os padroes identificados sao impressos no formato apresentado abaixo)
+# Funcao: Imprime em $saida os padroes identificados a partir das sequencias de itens no arquivo de 
+# entrada e de acordo com os parametros de entrada. Por exemplo, o padrão "2 3" que ocorre nas linhas,
+# 1 (uma vez), 2 (uma vez) e 3 (duas vezes) é impresso no formato:
+# <pattern>
+# <freq>4</freq>
+# <what>2 3</what>
+# <where>1 2 3 3</where>
+# </pattern>
+
+# Sub-rotina ocorrencias
+# Entrada: $sub e $str
+# Funcao: Retorna o numero de vezes que $sub eh encontrada em $str
+
+# Sub-rotina padroes_monolingues
+# Entrada: $entrada (arquivo com os blocos dos exemplos a partir dos quais os padroes serao identificados)
+#          $icategs (categorias gramaticais para as quais se deseja identificar os padroes)
+#          $ecategs (categorias gramaticais que nao devem estar presentes nos padroes identificados)
+#          $freq    (frequencia minima para um padrao)
+#          $min     (tamanho minimo do padrao)
+#          $max     (tamanho maximo do padrao)
+# Saida: Imprime em $saida os padroes identificados e filtrados, se $icategs ou $ecategs != ""
+# Funcao: Identifica os padroes monolingues existentes nos blocos em $entrada para as categorias
+# $icategs e que nao contenham as categorias $ecategs, para tipo $tipo, com tamanho entre $min e 
+# $max e que ocorram no minimo $freq vezes
+
+# Sub-rotina padroes_bilingues
+# Entrada: $campo    (nivel de abstracao para o qual se esta gerando as regras)
+#          $tipo     (tipo de bloco de alinhamento para o qual se deseja identificar os padroes)
+#          $icategs  (categorias gramaticais para as quais se deseja identificar os padroes)
+#          $freq     (frequencia minima para considerar dois padroes (fonte e alvo) uma regra)
+#          $padfonte (hash com os padroes fonte)
+#          $exefonte (array com os exemplos fonte)
+#          $exealvo  (array com os exemplos alvo)
+#	Saida:	 $padbil   (hash de padroes bilingues alterado apos a insercao dos padroes para o campo
+#                     $campo)
+#          quantidade de padroes bilingues identificados
+# Funcao: Verifica quais padroes fonte tem correspondencias alvo que aparecem, no minimo, $freq vezes  
+# criando padroes bilingues envolvendo ambos. Tambem faz o mapeamento de valores lexicais alvo para 
+# categorias em $icategs
+
+#***************************************  FILTRAGEM POR TIPOS *****************************************
+# Sub-rotina filtra_tipo2
+# Entrada: $posicoes (array de posicoes referentes a um bloco de alinhamentos)
+# Saida: 1 se o array de posicoes contem valores nao ordenados crescentemente, 0 caso contrario
+# Funcao: Verifica se as posicoes em $posicoes correspondem ao bloco de alinhamento do tipo 2, ou seja,
+# nao estao ordenadas crescentemente
+
+# Sub-rotina filtra_tipo1
+# Entrada: $posicoes (array de posicoes referentes a um bloco de alinhamentos)
+# Saida: 1 se o array de posicoes contem valores ordenados crescentemente, 0 caso contrario
+# Funcao: Verifica se as posicoes em $posicoes correspondem ao bloco de alinhamento do tipo 1, ou seja,
+# estao ordenadas crescentemente
+
+# Sub-rotina filtra_tipo0
+# Entrada: $posicoes (array de posicoes referentes a um bloco de alinhamentos)
+# Saida: 1 se o array de posicoes contem uma ou mais posicoes iguais a 0, 0 caso contrario
+# Funcao: Verifica se as posicoes em $posicoes correspondem ao bloco de alinhamento do tipo 0, ou seja,
+# alinhamentos de omissao
+
+#*******************************************  ENTRADA/SAIDA  ******************************************
+# Sub-rotina imprime_padroes_filtrados
+# Entrada: $entrada (nome do arquivo no qual estao os padroes identificados)
+#          $icategs (categorias gramaticais que devem estar presentes nos padroes)
+#          $ecategs (categorias gramaticais que NAO devem estar presentes nos padroes)
+# Saida: $saida (arquivo com os padroes filtrados)
+#        Quantidade de padroes filtrados
+# Funcao: Filtra os padroes em $entrada e imprime em $saida apenas aqueles que contenham pelo
+# menos uma das categorias em $icategs e nenhuma das categorias em $ecategs
+
+# Sub-rotina le_padroes_mono
+# Entrada: $arq      (arquivo a partir do qual os padroes serao lidos)
+#					 $blocos	 (array de blocos de um determinado tipo)
+#					 $exemplos (array de exemplos)
+#          $icategs  (categorias gramaticais que devem estar presentes nos padroes)
+#					 $campo		 (nivel de abstracao no qual se deseja buscar os padroes)
+#					 $ngram		 (indica se os padroes sao n-gramas ou possuem lacunas)
+#	Saida: $padroes	 (hash com as informacoes dos padroes lidos)
+#        Quantidade de padroes lidos
+# Funcao: Le, a partir do arquivo $arq, os padroes em um formato especifico e os armazena em $padroes
+# Exemplo de um trecho do arquivo de entrada:
+# <pattern>
+# <freq>573</freq>
+# <what>det n</what>
+# <where>1 2 4 4 5 6 7 8 8 8 9 11 ...</where>
+# </pattern>
+# No qual o campo <what> armazena o padrao identificado e o campo <where>, as linhas do arquivo de
+# entrada nas quais tal padrao ocorre. Essas linhas, na verdade, correspondem aos blocos de
+# alinhamento impressos, porem os blocos iniciam em 0 e as linhas em 1. Alem disso, eh importante
+# citar que um padrao pode ocorrer mais de uma vez em uma linha e, portanto, podem haver numeros
+# repetidos em <where>
+
+# Sub-rotina le_padroes_bili
+# Entrada: $arq   (arquivo a partir do qual os padroes serao lidos)
+#	Saida: $padroes	(hash com as informacoes dos padroes lidos)
+#        Quantidade de padroes lidos
+# Funcao: Le, a partir do arquivo $arq, os padroes em um formato especifico e os armazena em $padroes
+# Exemplo de um trecho do arquivo de entrada:
+# adj de:pr=>adj de:pr
+# 0&1
+# Exemplo 3: [9]:Europeu<adj><m><sg>:10 [10]:de<pr>:11=>[10]:Europeo<adj><m><sg>:9 [11]:de<pr>:10 
+# Exemplo 142: [12]:diário<adj><f><pl>:14 [13]:de<pr>:15=>[14]:diario<adj><f><pl>:12 [15]:de<pr>:13 
+
+# Sub-rotina info
+# Entrada: $elemento (posicao de um elemento do hash do exemplo $exemplo)
+#          $exemplo (hash com as informacoes de um dado exemplo)
+# Saida: Uma string com todas as informacoes referentes ao token $elemento no exemplo $exemplo.
+# Funcao: Imprime toda a informacao relativa a um determinado elemento do exemplo em %$exemplo
+
+# Subrotina imprime_exemplos
+# Entrada: $fh (filehandle do aquivo aberto no qual os exemplos serao impressos)
+#          $exemplos (array com os identificadores dos exemplos a serem impressos)
+#          $exef (array de exemplos fonte)
+#          $exea (array de exemplos alvo)
+# Funcao: Imprime no arquivo $fh as informacoes relativas a todos os tokens de todos os exemplos 
+# em $exemplos.
+
+=head1 SEE ALSO
+
+See Perl and ReTraTos documentation.
+
+=head1 AUTHOR
+
+Helena de Medeiros Caseli, helenacaseli@gmail.com
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2005 by ReTraTos Project: http://retratos.sourceforge.net/
+
+This library is free software; you can redistribute it and/or modify
+it under the GNU General Public License 2/3, which you should find on
+parent directory. Distribution of this module should be done including
+all ReTraTos package, with respective copyright notice.
+
+=cut
