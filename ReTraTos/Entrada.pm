@@ -1,7 +1,5 @@
 package Entrada;
 
-# 19/04/2006
-
 use 5.006;
 use strict;
 use warnings;
@@ -11,8 +9,8 @@ sub le_exemplos {
 	my($arq,$exe) = @_;
 	my(%sent,$cont);
 	
-	print "\tLendo exemplos ... ";
-	open(ARQ,$arq) or die "Nao eh possivel abrir o arquivo $arq\n";	
+	Auxiliares::mensagem("\tReading the examples ... ");
+	open(ARQ,$arq) or Auxiliares::erro_abertura_arquivo($arq);	
 	$cont = 0;
 	while (<ARQ>) {
 			if (/^<s snum=(\d+)>(.+)<\/s>$/) { 
@@ -20,10 +18,10 @@ sub le_exemplos {
 				push @$exe,{ %sent };
 				$cont++;
 			}
-			else { die "ERRO (ReTraTos_IO:le_exemplos): Formato errado em $_\n"; }
+			else { Auxiliares::mensagem_erro("(Entrada::le_exemplos): Unexpected input format in $_\n"); }
 	}  
 	close ARQ;
-	print " $cont exemplos lidos\n";
+	Auxiliares::mensagem(" $cont examples read\n");
 }
 
 sub le_sentenca {
@@ -36,7 +34,9 @@ sub le_sentenca {
 # 1. Separa os tokens da sentenca em: forma superficial, item lexical, etiqueta de POS, atributos da etiqueta e alinhamento
 		$_ = shift(@tokens);
 		($str,$alinhamento) = /^(.+):(.+)$/;
-		if (!defined($str)) { die "ERRO (ReTraTos_IO:le_sentenca): Formato errado em sentenca $id, token $_\n"; }
+		if (!defined($str)) { 
+			Auxiliares::mensagem_erro("(Entrada::le_sentenca): Unexpected input format in sentence $id, token $_\n"); 
+		}
 		if ($str =~ /^(.+)\/(.+)$/) {
 			$sup = $1; $str = $2;
 		}
@@ -64,7 +64,7 @@ sub le_sentenca {
 			elsif (/^(\d+)<num>h(\<.+\>)*(\d+)<num>$/) { ($t,$et) = ("$1h$3","time"); }
 			elsif (/^(\d+)<num>o\<det\>\<def\>(\<.+\>+)$/) { ($t,$et,$atr) = ("$1o","numord",$2); }
 			else {	
-				print "AVISO (ReTraTos_IO:le_sentenca): String etiquetada errada em $str\n"; 
+				Auxiliares::mensagem_aviso("(Entrada::le_sentenca): String $str is wrongly tagged\n"); 
 				1 while s/([^\<]+)<(.+?)>/$1/g;
 				$t = $_;
 			}

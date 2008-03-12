@@ -1,9 +1,5 @@
 package Blocos;
 
-# 19/03/2007 (alterei a atribuicao do fim2f e fim2a em cria blocos que estava sem o -1)
-# 30/01/2007 (alteracoes para o codigo fonte ficar mais parecido com o algoritmo da tese)
-# 31/08/2006 (impressao de blocos alterada para apagar de $blocos os que nao foram filtrados)
-
 use 5.006;
 use strict;
 use warnings;
@@ -73,7 +69,6 @@ sub cria_blocos {
 	my($janela,$tammin,$indexe,$fonte,$alvo,$blofonte,$bloalvo) = @_;
 	my($inif,$inia,$fimf,$fima,@auxf,@auxa,$ini0,$fim0,$ini2f,$ini2a,$fim2f,$fim2a,$dois);
 	
-#	print "$indexe\n";
 	$inif = $inia = $fimf = $fima = $ini2f = $ini2a = $fim2f = $fim2a = $dois = 0;
 	while (($fimf <= $#$fonte) && ($fima <= $#$alvo)) { # percorre todos os alinhamentos (L1)
 		@auxf = split(/\_/,$$fonte[$fimf]);
@@ -90,8 +85,7 @@ sub cria_blocos {
 		}
 		elsif (($$fonte[$fimf] !~ /_/) && ($$fonte[$fimf] == 0)) { # omissoes fonte: tipo0
 			$inif = $fimf;
-			processa_tipo_0(\$fimf,$fonte); # 30/01/07
-#			while (($fimf <= $#$fonte) && ($$fonte[$fimf] !~ /_/) && ($$fonte[$fimf] == 0)) { $fimf++; }
+			processa_tipo_0(\$fimf,$fonte); 
 			$ini0 = $inif;
 			$fim0 = $fimf;
 			aplica_janela(\$ini0,\$fim0,$janela,$#$fonte);
@@ -99,8 +93,7 @@ sub cria_blocos {
 		}
 		elsif (($$alvo[$fima] !~ /\_/) && ($$alvo[$fima] == 0)) { # omissoes alvo: tipo0
 			$inia = $fima;
-			processa_tipo_0(\$fima,$alvo); # 30/01/07
-#			while (($fima <= $#$alvo) && ($$alvo[$fima] !~ /_/) && ($$alvo[$fima] == 0)) { $fima++; }
+			processa_tipo_0(\$fima,$alvo);
 			$ini0 = $inia;
 			$fim0 = $fima;
 			aplica_janela(\$ini0,\$fim0,$janela,$#$alvo);
@@ -131,12 +124,10 @@ sub cria_blocos {
 	if ($fimf <= $#$fonte) { cria_bloco($indexe,$fimf,$#$fonte+1,0,$blofonte); } # tipo 0: omissao fonte
 	if ($fima <= $#$alvo) { cria_bloco($indexe,$fima,$#$alvo+1,0,$bloalvo); } # tipo 0: omissao alvo
 	if ($#{$$blofonte{'1'}} != $#{$$bloalvo{'1'}}) {
-		print "ERRO: Quantidades diferentes de blocos fonte e alvo do tipo 1 no exemplo ",$indexe+1,"\n";
-		exit 1;
+		Auxiliares::mensagem_erro("(Blocos::cria_blocos): Different number of source and target blocks of type 1 in the example ".($indexe+1)."\n");
 	}
 	if ($#{$$blofonte{'2'}} != $#{$$bloalvo{'2'}}) {
-		print "ERRO: Quantidades diferentes de blocos fonte e alvo do tipo 2 no exemplo ",$indexe+1,"\n";
-		exit 1;
+		Auxiliares::mensagem_erro("(Blocos::cria_blocos): Different number of source and target blocks of type 2 in the example ".($indexe+1)."\n");
 	}
 }
 
@@ -144,19 +135,19 @@ sub imprime_blocos {
 	my($exemplos,$blocos,$icategs,$campo,$tipo,$arq) = @_;	
 	my($indexe,$itens,$ini,$fim,$i,@aux);
 	
-	open(ARQ,">$arq") or die "Nao eh possivel abrir o arquivo $arq\n";
+	open(ARQ,">$arq") or Auxiliares::erro_abertura_arquivo($arq);
 	$i = 0;
 	while ($i <= $#$blocos) {
-		$indexe = ${$$blocos[$i]}[0]; # 02/08/06
-		($ini,$fim) = @{${$$blocos[$i]}[1]}; # 02/08/06
+		$indexe = ${$$blocos[$i]}[0]; 
+		($ini,$fim) = @{${$$blocos[$i]}[1]}; 
 		$itens = join(" ",map(Auxiliares::mapeia_valor($exemplos,$indexe,$_,$campo,$icategs),($ini .. $fim)));
 		if (($icategs ne "") && (Auxiliares::filtra_categorias_gramaticais($itens,$icategs,1) == 0)) { $itens = ''; }	
 		if ($itens ne '') { print ARQ "$itens\n"; }
-		else { delete($$blocos[$i]); } # 31/08/06
+		else { delete($$blocos[$i]); } 
 		$i++;		
 	}
 	close ARQ;
-	@$blocos = grep(defined($_),@$blocos); # 31/08/06
+	@$blocos = grep(defined($_),@$blocos); 
 }
 
 1;

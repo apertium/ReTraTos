@@ -1,38 +1,46 @@
 package Auxiliares;
 
-# 21/03/2007 (nova rotina pertence, agora com hash e lc no mapeia_valores para itens
-# lematizados)
-# 31/01/2007 (insercao de subrotinas para tratamento de erros)
-# 31/08/2006
-
 use 5.006;
 use strict;
 use warnings;
 no warnings qw(redefine);
 use locale;
 
-#***********************************  ERROS   ************************************
+#***********************************  MENSAGENS **********************************
 sub verifica_arquivo {
 	my($arq) = @_;
 
-	open(ARQ,$arq) or mensagem("ERRO: Impossivel abrir o arquivo $arq\n");
+	open(ARQ,$arq) or erro_abertura_arquivo($arq);
 	close ARQ;
 }
 
-#***********************************  GERAIS  ************************************
+sub erro_abertura_arquivo {
+	my($arq) = @_;
+	
+	mensagem_erro("It is not possible to open the file $arq\n");
+}
+
 sub mensagem {
 	my($msg) = @_;
 
-	print STDERR $msg;
+	print $msg;
 }
 
 sub mensagem_erro {
 	my($msg) = @_;
 
-	print STDERR $msg;
+	print "ERROR: ",$msg;
 	exit 1; 
 }
 
+sub mensagem_aviso {
+	my($msg) = @_;
+
+	print "WARNING: ",$msg;
+	exit 1; 
+}
+
+#***********************************  GERAIS  ************************************
 sub imprime_hora {
 	my($s,$m,$h,$resto) = localtime(time);
 	
@@ -188,7 +196,7 @@ sub mapeia_valor {
 	
 	@campos = split(/\,/,$campo);
 	if ($pos < 0) {
-		die "(ERRO: Auxiliares::mapeia_valor) Tenta imprimir algo que nao deveria\n"; 
+		mensagem_erro("(Auxiliares::mapeia_valor) Tenta imprimir algo que nao deveria\n"); 
 		return "_"; 
 	}
 	@aux = split(/\,/,$icategs);

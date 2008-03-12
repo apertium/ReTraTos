@@ -1,11 +1,5 @@
 package Lexico;
 
-# 21/03/2007 (descricao das sub-rotinas de limpeza na documentacao)
-# 25/02/2007 (alterei resolve_ambiguidades e processa_bilingue para considerar como frequencia
-# a da combinacao de atributos alvo mais frequente e nao a da combinacao de atributos fonte 
-# como ate entao, pois apenas a melhor combinacao de atributos eh considerada)
-# 30/01/2007 (inseri chamadas a subrotina mensagem e arquivo de rodape como entrada)
-
 use 5.006;
 use strict;
 use warnings;
@@ -19,8 +13,8 @@ sub gera_lexico_bilingue {
 	my($freq,$exef,$exea,$atrs,$lexbil) = @_;
 	my(%lexfonte,%lexalvo);
 	
-	gera_lexico($exef,$exea,'fonte-alvo',\%lexfonte);
-	gera_lexico($exea,$exef,'alvo-fonte',\%lexalvo);
+	gera_lexico($exef,$exea,'source-target',\%lexfonte);
+	gera_lexico($exea,$exef,'target-source',\%lexalvo);
 	processa_bilingue($freq,\%lexfonte,\%lexalvo,$lexbil);
 	%lexfonte = %lexalvo = ();
 	generaliza_bilingue($lexbil);
@@ -35,7 +29,7 @@ sub gera_lexico {
 	my($exef,$exea,$sent,$lex) = @_;
 	my($idexe,$posf,$basef,$basea,$categf,$catega,$atrf,$atra,@alvos,@fontes,$i,@itensfonte);
 
-	Auxiliares::mensagem("\tGerando lexico $sent ... ");	
+	Auxiliares::mensagem("\tGenerating $sent dictionary ... ");	
 	for($idexe=0;$idexe <= $#$exef;$idexe++) {
 		$posf = 0;
 		@itensfonte = @{$$exef[$idexe]{'lex'}};
@@ -103,7 +97,7 @@ sub processa_bilingue {
 	my($freq,$lexf,$lexa,$lexbil) = @_;
 	my(@chaves,$fonte,$alvo,$basef,$basea,$catega,$categf,@fontes,@atributosf,@atributosa,$atrf,$atra,%aux,@teste,$str,$novafreq);
 
-	Auxiliares::mensagem("\tProcessando lexico bilingue ... ");
+	Auxiliares::mensagem("\tProcessing bilingual dictionary ... ");
 
 	# insere entradas que valem para os dois sentidos ou apenas para LR
 	@chaves = sort{$a cmp $b} keys %$lexf;
@@ -118,8 +112,6 @@ sub processa_bilingue {
 			if ($aux{$atrf} =~ /^(.*)\/(.*)\/(.*)\/(.*)$/) {
 				$basea = $1; $catega = $2; $atra = $3; $novafreq = $4;
 			}
-#			($basea,$catega,$atra) = split(/\//,$aux{$atrf}); # essa linha foi substituida (10/02/07) pelo codigo de cima para tratar
-# 		casos nos quais a / eh concatenada na forma superficial
 			$alvo = $basea.'/'.$catega;
 			@fontes = sort{int($$lexa{$alvo}{$atra}{$b}[0]) <=> int($$lexa{$alvo}{$atra}{$a}[0])} keys %{$$lexa{$alvo}{$atra}};
 			@fontes = grep($$lexa{$alvo}{$atra}{$_}[0] == $$lexa{$alvo}{$atra}{$fontes[0]}[0],@fontes);
@@ -144,8 +136,6 @@ sub processa_bilingue {
 			if ($aux{$atra} =~ /^(.*)\/(.*)\/(.*)\/(.*)$/) {
 				$basef = $1; $categf = $2; $atrf = $3; $novafreq = $4;
 			}
-#			($basef,$categf,$atrf) = split(/\//,$aux{$atra}); # essa linha foi substituida (10/02/07) pelo codigo de cima para tratar
-# 		casos nos quais a / eh concatenada na forma superficial
 			$fonte = $basef.'/'.$categf;	
 			$str = quotemeta($atrf.'/'.$alvo.'/'.$atra);			
 			@teste = grep(/^$str$/,map(@{$$lexbil{$fonte}{$_}},keys %{$$lexbil{$fonte}}));
@@ -224,16 +214,12 @@ sub generaliza_opcoes {
 		if ($$opcoes[$j] =~ /^(.*)\/(.*)\/(.*)\/(.*)\/(.*)$/) {
 			$atrf1 = $1; $basea1 = $2; $catega1 = $3; $atra1 = $4; $freq1 = $5;
 		}
-#		($atrf1,$basea1,$catega1,$atra1,$freq1) = split(/\//,$$opcoes[$j]); # essa linha foi substituida (13/02/07) pelo codigo de cima para tratar
-#		casos nos quais a / eh concatenada na forma superficial
 		$i = $j+1;
 		while ($i <= $#$opcoes) {
 			$atrf2 = $basea2 = $catega2 = $atra2 = $freq2 = "";
 			if ($$opcoes[$i] =~ /^(.*)\/(.*)\/(.*)\/(.*)\/(.*)$/) {
 				$atrf2 = $1; $basea2 = $2; $catega2 = $3; $atra2 = $4; $freq2 = $5;
 			}
-	#		($atrf2,$basea2,$catega2,$atra2,$freq2) = split(/\//,$$opcoes[$i]); # essa linha foi substituida (13/02/07) pelo codigo de cima para tratar
-	#		casos nos quais a / eh concatenada na forma superficial
 			if (($basea1 eq $basea2) && ($catega1 eq $catega2)) {
 				$valf = $vala = "";
 				$genf = ($atrf1 ne $atrf2) ? generaliza_atrs($atrf1,$atrf2,\$valf) : $atrf1;
@@ -260,7 +246,7 @@ sub generaliza_bilingue {
 	my($lex) = @_;
 	my(@fontes,@sents,$fonte,$atrf,$atra,$freq,$basea,$catega,$s);
 
-	Auxiliares::mensagem("\tGeneralizando lexico bilingue ... ");	
+	Auxiliares::mensagem("\tGeneralizing bilingual dictionary ... ");	
 	@fontes = keys %$lex;
 	while ($#fontes >= 0) {
 		$fonte = shift(@fontes);
@@ -272,8 +258,6 @@ sub generaliza_bilingue {
 				if (${$$lex{$fonte}{$sents[$s]}}[0] =~ /^(.*)\/(.*)\/(.*)\/(.*)\/(.*)$/) {
 					$atrf = $1; $basea = $2; $catega = $3; $atra = $4; $freq = $5;
 				}
-#				($atrf,$basea,$catega,$atra,$freq) = split(/\//,${$$lex{$fonte}{$sents[$s]}}[0]); # essa linha foi substituida (13/02/07)
-#	 		  pelo codigo de cima para tratar casos nos quais a / eh concatenada na forma superficial				
 				if ($atrf eq $atra) {
 					${$$lex{$fonte}{$sents[$s]}}[0] = "NC/".$basea.'/'.$catega."/NC/$freq";
 				}
@@ -340,7 +324,7 @@ sub limpa_atributos {
 	my($lexbil) = @_;
 	my($fonte,@sents,@chaves,$basef,$basea,$categf,$catega,$atrf,$atra,$freq,$sent,@alvos,%atributos,@fontes,$i);
 	
-	Auxiliares::mensagem("\tLimpando atributos iguais ... ");
+	Auxiliares::mensagem("\tCleaning equal attributes ... ");
 	@chaves = sort {$a cmp $b} keys %$lexbil;
 	while ($#chaves >= 0) {
 		$fonte = shift(@chaves);
@@ -348,8 +332,6 @@ sub limpa_atributos {
 		if ($fonte =~ /^(.*)\/(.*)$/) {
 			$basef = $1; $categf = $2;
 		}
-#		($basef,$categf) = split(/\//,$fonte); # essa linha foi substituida (13/02/07) pelo codigo de cima para tratar
-# 	casos nos quais a / eh concatenada na forma superficial
 		@sents = keys %{$$lexbil{$fonte}};
 		if ($#sents == 0) { # so limpa se ha apenas um sentido de traducao
 			$sent = shift(@sents);
@@ -359,8 +341,6 @@ sub limpa_atributos {
 				if (${$$lexbil{$fonte}{$sent}}[$i] =~ /^(.*)\/(.*)\/(.*)\/(.*)\/(.*)$/) {
 					$atrf = $1; $basea = $2; $catega = $3; $atra = $4; $freq = $5;
 				}
-#				($atrf,$basea,$catega,$atra,$freq) = split(/\//,${$$lexbil{$fonte}{$sent}}[$i]); # essa linha foi substituida (13/02/07)
-#	 		  pelo codigo de cima para tratar casos nos quais a / eh concatenada na forma superficial				
 				if (($atrf ne "NC") && ($atra ne "NC")) { 
 					if (limpa_atrs(\$atrf,\$atra)) {
 						if (exists($atributos{$atrf}{$basea.'/'.$catega.'/'.$atra})) {
@@ -396,8 +376,6 @@ sub a_determinar {
 			$atrf = $1; $basea = $2; $catega = $3; $atra = $4; $freq = $5;
 		}
 		shift(@$opcoes);
-#		($atrf,$basea,$catega,$atra,$freq) = split(/\//,shift(@$opcoes)); # essa linha foi substituida (13/02/07)
-#	  pelo codigo de cima para tratar casos nos quais a / eh concatenada na forma superficial				
 		$gen = $$atrs[$#$atrs-1];
 		$det = $$atrs[$#$atrs];
 		$enu = quotemeta(join("|",map($$atrs[$_],0..$#$atrs-2)));
@@ -419,7 +397,7 @@ sub trata_gd_nd {
 	my($lex,$atrs) = @_;
 	my(@fontes,$fonte,@aux,@sents,$i,$s,$sent,$info,$gen,$enu);
 
-	Auxiliares::mensagem("\tTratando genero e numero a determinar ... ");
+	Auxiliares::mensagem("\tDealing with gender and number to be defined ... ");
 	@fontes = keys %$lex;
 	while ($#fontes >= 0) {
 		$fonte = shift(@fontes);
@@ -458,7 +436,7 @@ sub formata_atrs {
 	my($atrs) = @_;
 	
 	if ($atrs eq "NC") { return ""; }
-	$atrs =~ s/<([^>]+)>/<s n="$1"\/>/g;
+	$atrs =~ s/<([^>]+)>/<s n="$1"\/>/g; #/
 	return $atrs;
 }
 
@@ -531,12 +509,12 @@ sub imprime_lexico_bilingue {
 	my($arq,$cab,$rod,$lexbil) = @_;
 	my($fonte,@sents,@chaves,$basef,$basea,$categf,$catega,$atrf,$atra,$sent,$freq,$strf,$stra,$tipo);
 	
-	Auxiliares::mensagem("\tImprimindo lexico bilingue... ");	
+	Auxiliares::mensagem("\tPrinting bilingual dictionary ... ");	
 	
-	open(ARQ,">$arq") or mensagem_erro("ERRO: Nao eh possivel abrir o arquivo $arq\n"); 
+	open(ARQ,">$arq") or Auxiliares::erro_abertura_arquivo($arq); 
 
 	# Imprime cabecalho (o mesmo do arquivo do lexico bilingue pt-es de Apertium versao 0.9 (05/05/2006))
-	open(CAB,"$cab") or Auxiliares::mensagem_erro("ERRO: Nao eh possivel abrir o arquivo $cab\n");
+	open(CAB,"$cab") or Auxiliares::erro_abertura_arquivo($cab); 
 	print ARQ <CAB>;
 	close CAB;
 
@@ -547,8 +525,6 @@ sub imprime_lexico_bilingue {
 		if ($fonte =~ /^(.*)\/(.*)$/) {
 			$basef = $1; $categf = $2;
 		}
-#		($basef,$categf) = split(/\//,$fonte); # essa linha foi substituida (13/02/07) pelo codigo de cima para tratar
-# 	casos nos quais a / eh concatenada na forma superficial
 		@sents = keys %{$$lexbil{$fonte}};
 		while ($#sents >= 0) { # imprime cada um dos sentidos
 			$sent = shift(@sents);
@@ -558,8 +534,6 @@ sub imprime_lexico_bilingue {
 					$atrf = $1; $basea = $2; $catega = $3; $atra = $4; $freq = $5;
 				}
 				shift(@{$$lexbil{$fonte}{$sent}});
-#				($atrf,$basea,$catega,$atra,$freq) = split(/\//,shift(@{$$lexbil{$fonte}{$sent}})); # essa linha foi substituida (13/02/07)
-#	 		  pelo codigo de cima para tratar casos nos quais a / eh concatenada na forma superficial				
 				if (($basef =~ /[a-zA-Z]/) && ($basea =~ /[a-zA-Z]/)) {
 					$strf = $stra = "";
 					$tipo = 0;
@@ -585,7 +559,7 @@ sub imprime_lexico_bilingue {
 			}
 		}
 	}
-	open(ROD,"$rod") or Auxiliares::mensagem_erro("ERRO: Nao eh possivel abrir o arquivo $rod\n");
+	open(ROD,"$rod") or Auxiliares::erro_abertura_arquivo($rod);
 	print ARQ <ROD>;
 	close ROD;
 	close ARQ;

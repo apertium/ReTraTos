@@ -1,10 +1,5 @@
 package Gera;
 
-# 19/03/2007 (atribuicao das restricoes para lidar com os casos nos quais elas sao vazias)
-# 29/08/2006 (alinhamentos sao salvos como string e nao mais como array)
-# 07/08/2006 (separacao dos passos da geracao das regras em criacao e generalizacao e
-# remocao das restricoes monolingues que estao nas bilingues em cria_restricoes)
-
 use 5.006;
 use strict;
 use warnings;
@@ -54,10 +49,10 @@ sub regras {
 			$qtd++;
 		}
 	}
-	print "\n\t$qtd regras geradas\n";
+	Auxiliares::mensagem("\n\t$qtd rules generated\n");
 }
 
-sub ocorre_restricao { # criado em 07/08/2006
+sub ocorre_restricao { 
 	my($res,$todas) = @_;
 	my(@aux);
 	
@@ -77,7 +72,7 @@ sub cria_restricoes {
 		$atra = join("/",map($$exea[$$infoexe[$idexe][0]]{'atr'}[$_],@{$$infoexe[$idexe][2]}));
 		@resa = restringe_monolingue($atra,$chara);
 		@resbili = restringe_bilingue($atrf,$atra,$charf,$chara);
-		# remove restricoes monolingues que aparecem nas restricoes bilingues (07/08/2006)
+		# remove restricoes monolingues que aparecem nas restricoes bilingues 
 		@aux = ();
 		map(push(@aux,split(/\=/,$_)),@resbili);
 		map(s/([^\,]+)\,.+/$1/,@aux);

@@ -1,9 +1,5 @@
 package Filtra;
 
-# 21/03/2007 (filtro de escopo para itens lematizados; impressao de qtd de regras filtradas
-# por cada estrategia de filtragem; filtro de valores lexicais retorna 1 ou 0)
-# 19/03/2007 (atribuicao das restricoes para lidar com os casos nos quais elas sao vazias)
-
 use 5.006;
 use strict;
 use warnings;
@@ -16,7 +12,7 @@ sub regras {
 
 	$contres = $contval = $contesc = $contfreq = $contamb = $naofil = 0;
 	@pfontes = keys %$regras;
-	print "\n\tFiltrando regras para ",$#pfontes+1," partes fonte com ";
+	Auxiliares::mensagem("\n\tFiltering the rules for ",$#pfontes+1," source sides with ");
 	while ($#pfontes >= 0) { #L1
 		$partefonte = shift(@pfontes);
 		if ($#{$$regras{$partefonte}} > 0) { # regra ambigua
@@ -27,7 +23,7 @@ sub regras {
 			$minfreq = ordena_filtra_partes_alvo(\@{$$regras{$partefonte}},$por); # filtro por freq
 			$contfreq += $i-$#{$$regras{$partefonte}};
 			if ($#{$$regras{$partefonte}} > 0) { # regra ambigua
-				# 21/03/2007 Se ha item lexicalizado na parte fonte entao o escopo de busca
+				# Se ha item lexicalizado na parte fonte entao o escopo de busca
 				# sera alteracoes nesse item na parte alvo, alteracoes em outros itens nao
 				# sao consideradas como importantes para serem filtradas
 				@escopo = ();
@@ -35,7 +31,7 @@ sub regras {
 				for($i = 1;$i <= $#{$$regras{$partefonte}};$i++) { # para as outras opcoes
 					# so vou filtrar por restricoes e valores lexicais se nao ha item lexicalizado
 					# ou a diferenca na parte alvo esta no item lexicalizado
-					if (($#escopo < 0) || (filtra_escopo($partefonte,$regras,$i,\@escopo))) { # 21/03/2007
+					if (($#escopo < 0) || (filtra_escopo($partefonte,$regras,$i,\@escopo))) { 
 						if (filtra_restricoes(\@{$$regras{$partefonte}},$i,$minfreq) == 0) {
 							if (filtra_valores_lexicais($partefonte,$regras,$i,$exef,$minfreq)) { $contval++; }
 							else { $naofil++; }
@@ -52,14 +48,24 @@ sub regras {
 			} # if ambigua apos ordena_filtra
 		} # if ambigua
 	} # while pfontes
-	print "$contamb regras ambiguas:";
-	if ($contfreq > 0) { print "\n\t\t-$contfreq filtradas de acordo com a frequencia minima para filtro"; }
-	if ($contesc > 0) { print "\n\t\t-$contesc filtradas de acordo com os itens lexicalizados"; }
-	if ($contres > 0) {	print "\n\t\t-$contres filtradas de acordo com as restricoes"; }
-	if ($contval > 0) {	print "\n\t\t-+$contval regras alteradas com os valores lexicais"; }
-	if ($naofil > 0) {	print "\n\t\t-$naofil eliminadas sem filtro"; }
+	Auxiliares::mensagem("$contamb ambiguous rules: ");
+	if ($contfreq > 0) { 
+		Auxiliares::mensagem("\n\t\t-$contfreq filtered according to filtering mininal frequency threshold"); 
+	}
+	if ($contesc > 0) { 
+		Auxiliares::mensagem("\n\t\t-$contesc filtered according to lemmas"); 
+	}
+	if ($contres > 0) {	
+		Auxiliares::mensagem("\n\t\t-$contres filtered according to some restrictions"); 
+	}
+	if ($contval > 0) {	
+		Auxiliares::mensagem("\n\t\t-+$contval rules changed with lexical values");
+	}
+	if ($naofil > 0) {	
+		Auxiliares::mensagem("\n\t\t-$naofil deleted without filreting"); 
+	}
 	@pfontes = keys %$regras;
-	print "\n\t",$#pfontes+1," regras resultantes apos o filtro\n";
+	Auxiliares::mensagem("\n\t".($#pfontes+1)." remaining rules after filtering\n");
 }
 
 #*****************************************************************************************************
@@ -96,7 +102,7 @@ sub ordena_filtra_partes_alvo {
 #****************************************************************************************************
 #                                        FILTRAGEM POR ESCOPO
 #****************************************************************************************************
-sub filtra_escopo { # 21/03/2007
+sub filtra_escopo { 
 	my($partefonte,$regras,$posicao,$escopo) = @_;
 	my(@melhoralvo,@outraalvo,@melhorali,@outraali,@melhorescopo,@outraescopo);
 	
@@ -117,7 +123,7 @@ sub filtra_escopo { # 21/03/2007
 	return 0;	
 }
 
-sub escopo_lexicalizado { # 21/03/2007
+sub escopo_lexicalizado { 
 	my($partefonte,$escopo) = @_;
 	my(@auxfonte);
 	
@@ -141,7 +147,6 @@ sub valores_lexicais {
 sub insere_info {
 	my($arrayexe,$infoexe,$arrayuni,$uni) = @_;
 	
-#	print "Tentando inserir: $$infoexe[0] (",join(",",@{$$infoexe[1]}),") (",join(",",@{$$infoexe[2]}),") em (",join(" ",@$arrayexe),")\n";
 	Auxiliares::insere_exemplo($infoexe,$arrayexe);
 	Auxiliares::insere_array($uni,$arrayuni);
 }
@@ -155,16 +160,11 @@ sub valores_unicos {
 	for($i=0;$i <= $#$res;$i++) { # para cada conjunto de restricoes
 		# armazena os exemplos nos quais os valores unicos ocorrem no conjunto de restricoes $$res[$i]
 		@exemplos = ();
-#		print "Exemplos: (",map($$_[0].'|'.join(",",@{$$_[1]}).'|'.join(",",@{$$_[2]}),@{$$res[$i][3]}),")\n";		
-#		print "Valores lexicais: ",join(",",map(${$$exe[$$_[0]]{'lex'}}[${$$_[1]}[$pos]],@{$$res[$i][3]})),"\n";
-#		print "Valores melhores: ",join(",",@$melhores),"\n";
 		map(Auxiliares::pertence(${$$exe[$$_[0]]{'lex'}}[${$$_[1]}[$pos]],$melhores) == 0 ? insere_info(\@exemplos,$_,$unicos,${$$exe[$$_[0]]{'lex'}}[${$$_[1]}[$pos]]) : (),@{${$$res[$i]}[3]});
 		if ($#exemplos >= 0) {
 			$chave = join('&',@{$$res[$i][0]}).'/'.join('&',@{$$res[$i][1]}).'/'.join('&',@{$$res[$i][2]});
-#			map(Auxiliares::insere_exemplo(\@{$_},\@{$$opres{$chave}}),@exemplos);
 			@{$$opres{$chave}} = @exemplos;
 			$qtd += $#exemplos+1;			
-#			print "Chave = $chave, Exemplos:",join(" ",map($$_[0].'|'.join(",",@{$$_[1]}).'|'.join(",",@{$$_[2]}),@{$$opres{$chave}})),"\n";
 		}
 	}
 	return $qtd;
@@ -180,11 +180,9 @@ sub busca_posicao_diferente {
 	@alopalvo = split(/\&/,$$regras{$partefonte}[$opalvo][1]);  # alinhamento da opcao sob estudo
 	# busca a posicao na qual ha diferenca entre a melhor opcao e $opalvo, com base no alinhamento
 	$aux = Auxiliares::posicao_diferente(\@almelhor,\@alopalvo,$$pos+1);
-#	print "Alinhamentos = (",join(",",@almelhor),") e (",join(",",@alopalvo),") = $aux\n";
 	if ($aux < 0) {
 		# busca a posicao na qual ha diferenca entre a melhor opcao e $opalvo, com base na parte alvo
 		$aux = Auxiliares::posicao_diferente(\@pamelhor,\@paopalvo,$$pos+1);
-#		print "Alvos = (",join(",",@pamelhor),") e (",join(",",@paopalvo),") = $aux\n";
 	}
 	$$pos = $aux;
 }
@@ -194,7 +192,6 @@ sub filtra_valores_lexicais {
 	my(@auxfonte,$pos,@melhoresvalores,%oprestricao,@restringe,$t,$qtd,$novo,@chaves,@aux,$chave,@opcao,$sucesso);
 	
 	$sucesso = 0;
-#	print "\nValores lexicais: Tentando filtrar $partefonte\n";
 	@auxfonte = split(/ /,$partefonte);
 	%oprestricao = ();
 	$qtd = 0;
@@ -204,7 +201,6 @@ sub filtra_valores_lexicais {
 		busca_posicao_diferente($partefonte,$regras,$posicao,\$pos);
 		if (($pos >= 0) && ($pos <= $#auxfonte) && 
 			($auxfonte[$pos] !~ /\:/)) { # pos so sera lexicalizada se ainda nao estiver
-#			print "Buscando valores lexicais para posicao $pos = $auxfonte[$pos]\n";
 			map(valores_lexicais(\@{$$regras{$partefonte}[$_][2]},$pos,$exef,\@melhoresvalores),0..$posicao-1);
 			$t = valores_unicos(\@{$$regras{$partefonte}[$posicao][2]},$pos,$exef,\@melhoresvalores,\%oprestricao,\@restringe);
 			if ($t > 0) {
@@ -215,7 +211,6 @@ sub filtra_valores_lexicais {
 	} until ($pos < 0);
 	if ($qtd >= $minfreq) { # so cria a regra se ela ocorrer em pelo menos $minfreq exemplos
 		$novo = join(" ",@auxfonte);
-#		print "Lexicais: parte fonte anterior = $partefonte e nova = $novo\n";
 		${$$regras{$novo}[0]}[0] = ${$$regras{$partefonte}[$posicao]}[0];
 		${$$regras{$novo}[0]}[1] = ${$$regras{$partefonte}[$posicao]}[1];
 		@chaves = keys %oprestricao;
@@ -235,7 +230,6 @@ sub filtra_valores_lexicais {
 			# informacoes dos exemplos
 			push(@opcao,[@{$oprestricao{$chave}}]);
 			push(@{${$$regras{$novo}[0]}[2]},[@opcao]);
-#			print join(" ",map($$_[0].'|'.join(",",@{$$_[1]}).'|'.join(",",@{$$_[2]}),@{${${$$regras{$novo}[0]}[2]}[3]})),"\n";
 		}
 		$sucesso = 1;
 	}

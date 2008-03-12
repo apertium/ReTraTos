@@ -1,10 +1,5 @@
 package Ordena;
 
-# 21/03/2007 (funcao de ordenacao retorna qtd de regras ordenadas)
-# 19/03/2007 (separacao do peso e da frequencia de uma regra, agora peso esta na penultima posicao
-# do array valor da regra e frequencia, na ultima)
-# OBS: Verificar se esta OK para todo o conj de dados pq ate agora so foi verificado para 1000
-
 use 5.006;
 use strict;
 use warnings;
@@ -18,7 +13,7 @@ sub regras {
 	my($totalreg);
 	
 	$totalreg = calcula_frequencias($regras);
-	print "\n\t",atribui_pesos_ordena($regras,$totalreg)," regras ordenadas\n";
+	Auxiliares::mensagem("\n\t".atribui_pesos_ordena($regras,$totalreg)." rules sorted\n");
 }
 
 #*****************************************************************************************************
@@ -103,7 +98,7 @@ sub atribui_pesos_ordena {
 		push(@{$$regras{$chaves[$i]}},sprintf("%1.4f",$freqreg/$totalreg));
 		push(@{$$regras{$chaves[$i]}},$freqreg);
 	}		
-	return $i; # 23/01/2007
+	return $i; 
 }
 
 1;

@@ -1,9 +1,5 @@
 package Identifica;
 
-# 31/08/2006 (mudanca nas rotinas padroes_monolingues, padroes_bilingues e le_padroes_bili)
-# 29/08/2006 (alinhamentos sao salvos como string e nao mais como array)
-# 02/08/2006 (otimizacoes no codigo: $janela em padroes_monolingues, imprime_blocos e le_padroes; remocao de mapeia_bloco)
-
 use 5.006;
 use strict;
 use warnings;
@@ -13,16 +9,87 @@ use Auxiliares;
 #*****************************************************************************************************
 #                                     IDENTIFICACAO DE PADROES MONOLINGUES
 #*****************************************************************************************************
+sub identifica_padroes {
+	my($entrada,$minfreq,$tammin,$tammax,$saida,$verbose) = @_;
+	my($padrao,@linhas,$ini,$fim,@tokens,@ids,$qtd,$suporte,$i,$l,@aux,@padroes,@naofreq);
+	
+	open(IN,$entrada) or Auxiliares::erro_abertura_arquivo($entrada);
+	@linhas = <IN>;
+	close IN;
+	
+	open(OUT,">$saida") or Auxiliares::erro_abertura_arquivo($saida);
+	
+	map(s/\n//,@linhas);
+	map(s/\r//,@linhas);
+	
+	@padroes = @naofreq = ();
+	for($l=0;$l <= $#linhas;$l++) { #L1
+		@tokens = split(/ +/,$linhas[$l]);
+		$ini = 0;
+		while ($ini <= ($#tokens-$tammin+1)) { #L2
+			$fim = $ini+$tammin-1;
+			@aux = ($l .. $#linhas);
+			# Busca padroes de tamanho de $tammin a $tammax começando na posiçao 0
+			while (($fim <= $#tokens) && ($fim <= $ini+$tammax-1)) { #L3
+				$padrao = join(" ",map($tokens[$_],$ini .. $fim));
+				# Se o prefixo nao foi considerado nao frequente e o padrao ainda nao foi testado
+				if ((Auxiliares::pertence($padrao,\@padroes) == 0) && 
+				    (Auxiliares::pertence($padrao,\@naofreq) == 0)) { 
+					# Cria conjunto de identificadores de sentenças nas quais $padrao ocorre
+					@ids = (); $suporte = 0;			
+					for($i = 0;$i <= $#aux;$i++) {
+						if ($verbose) { Auxiliares::mensagem("Verifying $padrao in line ".($aux[$i]+1)); }
+						$qtd = ocorrencias($padrao,$linhas[$aux[$i]]);
+						if ($verbose) { Auxiliares::mensagem(" occurr $qtd times\n"); }
+						while ($qtd > 0) { push(@ids,$aux[$i]); $suporte++; $qtd--; }					
+					}
+					if ($suporte >= $minfreq) { # Eh um padrao
+						print OUT "<pattern>\n<freq>",$#ids+1;
+						print OUT "</freq>\n<what>$padrao</what>\n<where>";
+						print OUT join(" ",map($_+1,@ids)),"</where>\n</pattern>\n";
+						@aux = ();
+						map(Auxiliares::pertence($_,\@aux) == 0 ? push(@aux,$_) : (),@ids);
+						push(@padroes,$padrao);
+					}
+					else { # se o prefixo nao eh um padrao qualquer coisa que começa com ele tb nao sera
+						push(@naofreq,$padrao);
+						last; 
+					} 				
+				}
+				$fim++;
+			}
+			$ini++;
+		}
+	}
+	close OUT;
+}
+
+sub ocorrencias {
+	my($sub,$str) = @_;
+	my($ind,$qtd,$off);
+	
+	$qtd = $off = 0;
+	while ($off < length($str)) {
+		$ind = index($str,$sub,$off);
+		if ($ind == -1) { last; }
+		if ((($ind == 0) || (substr($str,$ind-1,1) eq " ")) && 
+			(($ind+length($sub) >= length($str)) || (substr($str,$ind+length($sub),1) eq " "))) {
+			$qtd++;
+		}
+		$off = $ind + length($sub) + 1;		
+	}
+	return $qtd;
+}
+
 sub padroes_monolingues {
-	my($entrada,$icategs,$ecategs,$freq,$min,$max,$saida) = @_;
+	my($entrada,$icategs,$ecategs,$freq,$min,$max,$saida,$verbose) = @_;
 
 	# Identifica padroes que ocorrem no minimo $freq vezes e tem tamanho entre $min e $max itens
-	system("perl identifica_padroes.pl -a $entrada -f $freq -mi $min -ma $max > $saida");
+	identifica_padroes($entrada,$freq,$min,$max,$saida,$verbose);
 	
 	if (($icategs ne '') || ($ecategs ne '')) {
 		$entrada = $saida.'_temp';
 		system("mv $saida $entrada"); # So no linux
-#		$entrada = 'ReTraTos_pt_lemas_lihla_1000Xes_lemas_lihla_1000_0.0015_pos_0_+pr_temp.txt';
 		imprime_padroes_filtrados($entrada,$icategs,$ecategs,$saida);
 		system("rm $entrada"); # So no linux
 	}
@@ -37,7 +104,7 @@ sub padroes_bilingues {
 	my(@padroesalvo,%candidatos,@alinhamento,@ordenadas,$chave,@fontes,@aux,$alinhamentos);
 	
 	@fontes = sort {lc($a) cmp lc($b)} keys %$padfonte;
-	open(ARQ,">$saida") or die "Nao eh possivel abrir o arquivo $saida\n";	
+	open(ARQ,">$saida") or Auxiliares::erro_abertura_arquivo($saida);
 	while($#fontes >= 0) { # cada padrao fonte
 		$partefonte = shift(@fontes);
 		%candidatos = ();
@@ -119,8 +186,8 @@ sub imprime_padroes_filtrados {
 	my($n,$padrao,$aux);
 	
 	$n = 0;
-	open(IN,$entrada) or die "Nao eh possivel abrir o arquivo $entrada\n";
-	open(OUT,">$saida") or die "Nao eh possivel abrir o arquivo $saida\n";
+	open(IN,$entrada) or Auxiliares::erro_abertura_arquivo($entrada);
+	open(OUT,">$saida") or Auxiliares::erro_abertura_arquivo($saida);
 	while (<IN>) {
 		if (/<pattern>/) { $aux = "<pattern>\n"; }
 		elsif (/<what>(.+)<\/what>/) { 
@@ -149,7 +216,7 @@ sub le_padroes_mono {
 	my($padrao,@saida,@ids,$exe,$ini,$fim,@pospad,@aux,$qtd,$offset,$id,@tokens);
 	
 	$qtd = 0;
-	open(ARQ,$arq) or die "Nao eh possivel abrir o arquivo $arq\n";
+	open(ARQ,$arq) or Auxiliares::erro_abertura_arquivo($arq);
 	while (<ARQ>) {
 		if (/<what>(.+)<\/what>/) { 
 			$padrao = $1;
@@ -159,8 +226,8 @@ sub le_padroes_mono {
 			if (/<where>(.+)<\/where>/) { @ids = split(/ /,$1); }
 			while ($#ids >= 0) {
 				$id = shift(@ids);
-				$exe = $$blocos[$id-1][0]; # 02/08
-				($ini,$fim) = @{$$blocos[$id-1][1]}; # 02/08
+				$exe = $$blocos[$id-1][0]; 
+				($ini,$fim) = @{$$blocos[$id-1][1]}; 
 				@aux = map(Auxiliares::mapeia_valor($exemplos,$exe,$_,$campo,$icategs),($ini .. $fim));
 				while ($#aux >= 0) { # o padrao pode ocorrer mais de uma vez em um bloco
 					@pospad = @tokens;
@@ -187,12 +254,12 @@ sub le_padroes_mono {
 	return $qtd;
 }
 
-sub le_padroes_bili { # 31/08
+sub le_padroes_bili { 
 	my($arq,$padroes) = @_;
 	my($qtd,$partefonte,$partealvo,$alinhamentos,@exemplos,$id,@posfonte,@posalvo);
 
 	$qtd = 0;
-	open(ARQ,$arq) or die "Nao eh possivel abrir o arquivo $arq\n";
+	open(ARQ,$arq) or Auxiliares::erro_abertura_arquivo($arq);
 	while (<ARQ>) {
 		if (/(.+)=>(.+)/) { 
 			$partefonte = $1;
@@ -202,7 +269,7 @@ sub le_padroes_bili { # 31/08
 			$alinhamentos =~ s/\n//g;			
 			@exemplos = ();
 			$_ = <ARQ>;
-			while (/^Exemplo (\d+): (.+)=>(.+)\n/) {
+			while (/^Example (\d+): (.+)=>(.+)\n/) {
 				$id = $1-1;
 				@posfonte = split(/ /,$2);
 				@posalvo = split(/ /,$3);
@@ -250,7 +317,7 @@ sub imprime_exemplos {
 	while ($#$exemplos >= 0) {
 		($idexe,@posicoes) = @{shift(@$exemplos)};
 		@tokens = map(info($_,\%{$$exef[$idexe]}),@{shift(@posicoes)});
-		print $fh "Exemplo ",$idexe+1,": ",join(" ",@tokens),"=>";
+		print $fh "Example ",$idexe+1,": ",join(" ",@tokens),"=>";
 		@posicoes = @{shift(@posicoes)};				
 		$ant = -1;
 		while ($#posicoes >= 0) {
