@@ -15,5 +15,5 @@ ReTraTos_rgl:
 pkgconfigdir = $(libdir)/pkgconfig
 
 EXTRA_DIST = m4/perlmodules.m4 m4/definedir.m4 \
-	identifica_padroes.pl ReTraTos_lex.pl \
+	ReTraTos_lex.pl \
 	ReTraTos.pl
