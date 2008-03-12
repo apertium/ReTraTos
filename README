@@ -5,12 +5,17 @@ ReTraTos package is composed of two bilingual resources induction programs:
  - ReTraTos.pl: induces rules from corpora
  - ReTraTos_lex.pl: induces bilingual dictionaries from corpora
 
-Actually, there is no engine (in this package) to perform translation based on the induced resources
+At the moment there is no engine (in this package) to perform translation based 
+on the induced resources.
 
 INPUT FORMAT
 
-Two parallel texts are used as input for both inductors. In this text each sentence has to be tagged with initial (<s>) and final (</s>) tags. The initial sentence tag (<s>) has an attribute (snum) whose value is an identificator for this sentence. Parallel sentences have the same identificator in source and target files. 
-  Example:
+Two parallel texts are used as input for both inductors. In this text each sentence 
+has to be tagged with initial (<s>) and final (</s>) tags. The initial sentence 
+tag (<s>) has an attribute (snum) whose value is an identificator for this 
+sentence. Parallel sentences have the same identificator in source and target files. 
+
+ Example:
   
   Source sentence
   <s snum=1>sourcetoken1 sourcetoken2 ... sourcetokenn</s>
@@ -21,17 +26,25 @@ Two parallel texts are used as input for both inductors. In this text each sente
 Each token in each sentence has to be separated by a white space as show above.
 Each token can have at most 5 pieces of information:
 
-	1. sur: the surface form of a word or a special character, that is, the token as it was found in the original sentences. For example: houses, living and .
+	1. sur: the surface form of a word or a special character, that is, 
+	the token as it was found in the original sentences. For example: houses, 
+	living and .
 	
-	2. bas: the lemma of a word or a special character, a number, etc. when it was tagged by the PoS tagger. For example: house, live and .
+	2. bas: the lemma of a word or a special character, a number, etc. when 
+	it was tagged by the PoS tagger. For example: house, live and .
 	
-	3. pos: PoS of lexical item according to the PoS tagger. The words unknown by the tagger (not tagged) and many special characters do not have this information. For example: n (noun), vblex (verb) or nothing.
+	3. pos: PoS of lexical item according to the PoS tagger. The words unknown 
+	by the tagger (not tagged) and many special characters do not have this 
+	information. For example: n (noun), vblex (verb) or nothing.
 	
-	4. atr: the value of each morphological attribute of a PoS tag. Each attribute value has to be between "<" and ">". For example: <pl> (plural), <ger> (gerund).
+	4. atr: the value of each morphological attribute of a PoS tag. Each attribute 
+	value has to be between "<" and ">". For example: <pl> (plural), <ger> (gerund).
 	
-	5. ali: a sequence of one or more numbers (separated by "_") refering to the positions of aligned items in the parallel sentences. For example: 14, 3, 7_8, 0.
+	5. ali: a sequence of one or more numbers (separated by "_") refering to the 
+	positions of aligned items in the parallel sentences. For example: 14, 3, 7_8, 0.
 
-	This information is derived from preprocessing the parallel texts with at least 2 tools: a PoS tagger (bas, pos and atr) and a lexical aligner (ali).
+	This information is derived from preprocessing the parallel texts with at 
+	least 2 tools: a PoS tagger (bas, pos and atr) and a lexical aligner (ali).
 
   The tokens are formated as shown below:
 
