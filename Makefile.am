@@ -2,15 +2,15 @@ VERSION=0.8.0
 
 SUBDIRS = ReTraTos
 
-bin_SCRIPTS = ReTraTos_lex ReTraTos_rgl
+bin_SCRIPTS = ReTraTos_lex ReTraTos_rules
 
 # here we should probably do some path processing
 
 ReTraTos_lex:	
 	cp ReTraTos_lex.pl ReTraTos_lex
 
-ReTraTos_rgl:
-	cp ReTraTos.pl ReTraTos_rgl
+ReTraTos_rules:
+	cp ReTraTos.pl ReTraTos_rules
 
 pkgconfigdir = $(libdir)/pkgconfig
 

@@ -7,7 +7,6 @@ AM_MAINTAINER_MODE
 
 AC_CHECK_PROG(PERL, perl, perl, none)
 
-AC_DEFINE_DIR(PERLPATH, perlpath)
 AC_DEFINE_DIR(DATADIR, datadir)
        
 perlpath=`$PERL -e 'foreach (@INC) { print "$_\n";}' | grep "^$DATADIR" | sort -r | head -1`
@@ -25,6 +24,8 @@ if test -z "$perlpath" ; then
 else
         AC_MSG_NOTICE([Perl libraries will be installed in $perlpath])
 fi
+
+AC_DEFINE_DIR(PERLPATH, perlpath)
 
 #use Getopt::Long;
 #use Pod::Usage;
