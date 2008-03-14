@@ -14,6 +14,8 @@ ReTraTos_rules:
 
 pkgconfigdir = $(libdir)/pkgconfig
 
+man_MANS=ReTraTos_rules.1 ReTraTos_lex.1
+
 EXTRA_DIST = m4/perlmodules.m4 m4/definedir.m4 \
 	ReTraTos_lex.pl \
-	ReTraTos.pl
+	ReTraTos.pl $(man_MANS)

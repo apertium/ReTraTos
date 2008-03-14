@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 use locale;
-use Auxiliares;
+use ReTraTos::Auxiliares;
 
 #*****************************************************************************************************
 #                                     IDENTIFICACAO DE PADROES MONOLINGUES
