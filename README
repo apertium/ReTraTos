@@ -1,4 +1,3 @@
-
 DESCRIPTION
 
 ReTraTos package is composed of two bilingual resources induction programs:
@@ -78,7 +77,8 @@ developed to put them in the Apertium's XML format
 
 REQUIREMENTS
 
-* ReTraTos needs Perl installed in the system.
+* ReTraTos needs Perl installed in the system, along with the following Perl
+  modules: Getopt::Long; Pod::Usage; IO::Handle
 
 QUICK START
 
@@ -110,7 +110,7 @@ QUICK START
     -sourcefile|s sourcefile  file with examples in source language (required)
     -targetfile|t targetfile  file with examples in target language (required)
     -type|ty      type        alignment type: 0, 1, 2 or 3 (all) (default=3)	
-    -level|l      level       rules\' abstraction level(s) (default=pos)
+    -level|l      level       abstraction level(s) of rules (default=pos)
     -include_gra|ig inpos     PoS for which induce rules (default=all)
     -exclude_gra|eg outpos    PoS for which do not induce rules (default=none)
     -per_ident|pi percident   % for frequency threshold on pattern ident. (df=0.0015)
@@ -123,3 +123,7 @@ QUICK START
    Sample:
 
    $ perl ReTraTos.pl -s test/pt.txt -t test/en.txt -f 0.0007 -eg cm -fi -so
+
+SEE ALSO
+
+   http://xixona.dlsi.ua.es/wiki/index.php/ReTraTos
