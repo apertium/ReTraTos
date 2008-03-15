@@ -1,6 +1,6 @@
 VERSION=0.8.0
 
-SUBDIRS = ReTraTos
+SUBDIRS = ReTraTos test
 
 bin_SCRIPTS = ReTraTos_lex ReTraTos_rules
 

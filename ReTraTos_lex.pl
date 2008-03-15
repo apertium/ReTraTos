@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# 03/02/2006
+# 30/01/2007 (mudei o nome de lexico para lexico e inseri arquivo de entrada com rodape do lexico)
+
 ######################################################################################################
 # Programa indutor de lexico bilingue
 # Entrada: 
@@ -16,7 +19,6 @@
 
 use warnings;
 use strict;
-no warnings qw(redefine);
 use locale;
 
 use lib "$ENV{PWD}/ReTraTos/";
@@ -34,16 +36,18 @@ my(@exemplosfonte,@exemplosalvo); # array com exemplos fonte e alvo
 my(%lexicobilingue); # lexico bilingue
 my(@atrs); # array de arrays com valores de atributos
 #*****************************************************************************************************
-my($arqfonte,$arqalvo,$arqcab,$arqrod,$arqatrs,$freq,$help);
+my($arqfonte,$arqalvo,$arqcab,$arqrod,$arqatrs,$freq,$form,$help);
 
+$form = 0;
 $freq = 1;
 
 	GetOptions( 'sourcefile|s=s' => \$arqfonte,
 				'targetfile|t=s' => \$arqalvo,
 				'beginning|b=s' => \$arqcab,
 				'ending|e=s' => \$arqrod,
-				'attrsfile|a=s'   => \$arqatrs,
+				'atrsfile|a=s'   => \$arqatrs,
 				'multifreq|f=n'  => \$freq,
+				'single|l=n'     => \$form,
 				'help|?'	 => \$help,) 
 		  || pod2usage(2);
 
@@ -57,7 +61,7 @@ $freq = 1;
 
 	# Le arquivo de atributos se o mesmo foi passado como parametro
 	if (defined($arqatrs)) {
-		open(ARQ,$arqatrs) or Auxiliares::erro_abertura_arquivo($arqatrs);
+		open(ARQ,$arqatrs) or Auxiliares::mensagem_erro("ERRO: Nao eh possivel abrir o arquivo $arqatrs\n");
 		while ($_ = <ARQ>) {
 			$_ =~ s/\n//;
 			push(@atrs,[split(/ /)]);
@@ -69,7 +73,7 @@ $freq = 1;
 	
 	@exemplosfonte = @exemplosalvo = %lexicobilingue = @atrs = ();
 	
-	Auxiliares::mensagem("\nPREPROCESSING\n\n");
+	Auxiliares::mensagem("\nPRE-PROCESSAMENTO\n\n");
 	
 	# Le exemplos de entrada
 	Entrada::le_exemplos($arqfonte,\@exemplosfonte);
@@ -77,13 +81,13 @@ $freq = 1;
 
 	
 	# Gera lexico bilingue
-	Auxiliares::mensagem("\nGENERATING DICTIONARY\n\n");	
+	Auxiliares::mensagem("\nGERANDO LEXICO\n\n");	
 	Lexico::gera_lexico_bilingue($freq,\@exemplosfonte,\@exemplosalvo,\@atrs,\%lexicobilingue);	
 	
 	# Imprime lexico bilingue
-	Auxiliares::mensagem("\nPRINTING DICTIONARY\n\n");
-	Lexico::imprime_lexico_bilingue($arq,$arqcab,$arqrod,\%lexicobilingue);	
-	Auxiliares::mensagem("\n\n");	
+	Auxiliares::mensagem("\nIMPRIMINDO LEXICO\n\n");
+	Lexico::imprime_lexico_bilingue($arq,$arqcab,$arqrod,\%lexicobilingue,$form);	
+	print "\n\n";	
 
 __END__
 
@@ -100,13 +104,14 @@ ReTraTos_lex - Bilingual dictionary inductor from aligned parallel texts
 -targetfile|t  file with examples in target language (required)
 -beginning|b   file with the beginning of a bilingual dictionary (required)
 -ending|e      file with the ending of a bilingual dictionary (required)
--attrsfile|a   file with information about attributes (optional)
+-atrsfile|a    file with information about atributes (optional)
 -multifreq|f   frequency threshold to filter multiword units (default=1)
+-single|l      print entries with one entry per line (default=0)
 -help|?        this guide
 
  Usage Example:
 
- perl ReTraTos_lex.pl -s pt.txt -t en.txt -b cab.txt -e rod.txt -f 50
+ ReTraTos_lex -s pt.txt -t es.txt -b inicio.txt -e fim.txt
 
  Helena de Medeiros Caseli jan/2006
 

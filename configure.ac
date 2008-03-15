@@ -50,4 +50,5 @@ PKG_CHECK_MODULES(APERTIUM, apertium-3.0 >= 3.0.0, APERTIUM="yes", AC_MSG_ERROR(
 AC_OUTPUT([
 Makefile
 ReTraTos/Makefile
+test/Makefile
 ])
