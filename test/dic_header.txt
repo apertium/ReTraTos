@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <dictionary>
   <alphabet/>
   <sdefs>
@@ -66,22 +66,19 @@
     <sdef n="num"/>
     <sdef n="ij"/>
     <sdef n="sp"/>
-	  <sdef n="sent"/>
-	  <sdef n="cm"/>
- 	  <sdef n="lpar"/>
-	  <sdef n="rpar"/>
-	  <sdef n="lquest"/>
-	 	<sdef n="percent"/>
-	 	<sdef n="abr"/>
-		<sdef n="cur"/>
-		<sdef n="par"/>
-		<sdef n="pfx"/>
-		<sdef n="pos"/>
-		<sdef n="sig"/>
-		<sdef n="v"/>
+    <sdef n="sent"/>
+    <sdef n="cm"/>
+    <sdef n="lpar"/>
+    <sdef n="rpar"/>
+    <sdef n="lquest"/>
+    <sdef n="percent"/>
+    <sdef n="abr"/>
+    <sdef n="cur"/>
+    <sdef n="par"/>
+    <sdef n="pfx"/>
+    <sdef n="pos"/>
+    <sdef n="sig"/>
+    <sdef n="v"/>
   </sdefs>
-
-  <pardefs>
-  </pardefs>
-
   <section id="main" type="standard">
+

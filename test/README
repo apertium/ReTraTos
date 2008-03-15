@@ -1,8 +1,12 @@
-
 TEST TEXTS
-  Parallel texts (pt.txt and en.txt) came from the parallel corpora Par-C available in LacioWeb (http://www.nilc.icmc.usp.br/lacioweb). 
+
+  Parallel texts (pt.txt and en.txt) came from the parallel corpora 
+  Par-C available in LacioWeb (http://www.nilc.icmc.usp.br/lacioweb). 
+
   These texts were:
-  1. PoS tagger with tools and data from Apertium (http://apertium.sourceforge.net/) 
-  2. Lexically aligned using GIZA++ (http://www.fjoch.com/GIZA++.html)
+
+    1. PoS tagged with tools and data from Apertium (http://apertium.sourceforge.net/) 
+    2. Lexically aligned using GIZA++ (http://www.fjoch.com/GIZA++.html)
   
-  Header (dic_header.txt) and footer (dic_footer.txt) contain extracts from Apertium's bilingual dictionaries files, in XML format.
+  The header (dic_header.txt) and footer (dic_footer.txt) contain 
+  extracts from Apertium's bilingual dictionaries files, in XML format.
