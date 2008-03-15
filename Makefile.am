@@ -20,4 +20,4 @@ EXTRA_DIST = m4/perlmodules.m4 m4/definedir.m4 \
 	ReTraTos_lex.pl \
 	ReTraTos.pl $(man_MANS)
 
-CLEANFILES ReTraTos_lex ReTraTos_rules
+CLEANFILES = ReTraTos_lex ReTraTos_rules

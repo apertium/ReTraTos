@@ -92,7 +92,7 @@ QUICK START
 
 3) Use the dictionary inductor (ReTraTos_lex.pl)
    
-   USAGE: perl ReTraTos_lex.pl -s sorcefile -t targetfile -b headerfile -e footerfile [-a attfile] [-f freqmwu]
+   USAGE: perl ReTraTos_lex -s sourcefile -t targetfile -b headerfile -e footerfile [-a attfile] [-f freqmwu]
     -sourcefile|s sourcefile    file with examples in source language (required)
     -targetfile|t targetfile    file with examples in target language (required)
     -beginning|b  headerfile    file with the beginning of a bilingual dictionary (required)
@@ -102,11 +102,11 @@ QUICK START
 
    Sample:
 
-   $ perl ReTraTos_lex.pl -s test/pt.txt -t test/en.txt -b test/dic_header.txt -e test/dic_footer.txt -f 50
+   $ perl ReTraTos_lex -s test/pt.txt -t test/en.txt -b test/dic_header.txt -e test/dic_footer.txt -f 50
 
 4) Use the rule inductor (ReTraTos.pl)
    
-   USAGE: perl ReTraTos.pl -s sourcefile -t targetfile [-ty type] [-l level] [-ig inpos] [-eg outpos] [-pi percident] [-fi] [-pf percfilt] [-so] [-r] [-v]
+   USAGE: perl ReTraTos_rules -s sourcefile -t targetfile [-ty type] [-l level] [-ig inpos] [-eg outpos] [-pi percident] [-fi] [-pf percfilt] [-so] [-r] [-v]
     -sourcefile|s sourcefile  file with examples in source language (required)
     -targetfile|t targetfile  file with examples in target language (required)
     -type|ty      type        alignment type: 0, 1, 2 or 3 (all) (default=3)	
@@ -122,7 +122,7 @@ QUICK START
 
    Sample:
 
-   $ perl ReTraTos.pl -s test/pt.txt -t test/en.txt -f 0.0007 -eg cm -fi -so
+   $ perl ReTraTos_rules -s test/pt.txt -t test/en.txt -f 0.0007 -eg cm -fi -so
 
 SEE ALSO
 
