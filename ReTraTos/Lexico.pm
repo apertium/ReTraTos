@@ -506,7 +506,7 @@ sub trata_multipalavra {
 }
 
 sub imprime_lexico_bilingue {
-	my($arq,$cab,$rod,$lexbil) = @_;
+	my($arq,$cab,$rod,$lexbil,$form) = @_;
 	my($fonte,@sents,@chaves,$basef,$basea,$categf,$catega,$atrf,$atra,$sent,$freq,$strf,$stra,$tipo);
 	
 	Auxiliares::mensagem("\tPrinting bilingual dictionary ... ");	
@@ -549,12 +549,22 @@ sub imprime_lexico_bilingue {
 					}
 					$strf =~ s/\_/<b\/>/g;
 					$stra =~ s/\_/<b\/>/g;
-					print ARQ "\n\t<e";
-					if ($sent ne "") { print ARQ ' r="',$sent,'"'; }
-					print ARQ ">\n";
-					if ($strf eq $stra) { print ARQ "\t\t<i>$strf</i>\n"; }
-					else { print ARQ "\t\t<p>\n\t\t\t<l>$strf</l>\n\t\t\t<r>$stra</r>\n\t\t</p>\n"; }
-					print ARQ "\t</e>";
+
+					if($form == 1) {
+						print ARQ "\n\t<e";
+						if ($sent ne "") { print ARQ ' r="',$sent,'"'; }
+						print ARQ ">";
+						print ARQ "<p><l>$strf</l><r>$stra</r></p>";
+						print ARQ "</e>";
+
+					} else {
+						print ARQ "\n\t<e";
+						if ($sent ne "") { print ARQ ' r="',$sent,'"'; }
+						print ARQ ">\n";
+						if ($strf eq $stra) { print ARQ "\t\t<i>$strf</i>\n"; }
+						else { print ARQ "\t\t<p>\n\t\t\t<l>$strf</l>\n\t\t\t<r>$stra</r>\n\t\t</p>\n"; }
+						print ARQ "\t</e>";
+					}
 				}
 			}
 		}
