@@ -31,8 +31,7 @@ AC_DEFINE_DIR(PERLPATH, perlpath)
 #use Pod::Usage;
 #use IO::Handle;
 
-#AC_PROG_PERL_MODULES([Getopt::Long Pod::Usage IO::Handle], ,
-#                          AC_MSG_WARN(Need some Perl modules)
+AC_PROG_PERL_MODULES(Getopt::Long Pod::Usage IO::Handle, , AC_MSG_WARN(Need some Perl modules))
 
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
